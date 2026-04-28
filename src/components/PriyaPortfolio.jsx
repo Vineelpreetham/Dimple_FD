@@ -177,7 +177,20 @@ const PriyaPortfolio = () => {
 
   // Force scroll to top whenever the page changes
   useEffect(() => {
-    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    // Reset standard scroll
+    window.scrollTo(0, 0);
+    
+    // Reset Lenis scroll if available
+    if (window.lenis) {
+      window.lenis.scrollTo(0, { immediate: true });
+    }
+
+    // Refresh ScrollTrigger after a short delay to allow DOM to settle
+    const timeout = setTimeout(() => {
+      ScrollTrigger.refresh();
+    }, 100);
+
+    return () => clearTimeout(timeout);
   }, [activePage]);
 
   // Determine if the current page is a main hub page
@@ -185,7 +198,12 @@ const PriyaPortfolio = () => {
 
   const showPage = (pageName) => {
     setActivePage(pageName);
-    window.scrollTo({ top: 0, behavior: 'instant' });
+    
+    // Immediate scroll reset
+    window.scrollTo(0, 0);
+    if (window.lenis) {
+      window.lenis.scrollTo(0, { immediate: true });
+    }
   };
 
   const goToSlide = useCallback((index) => {

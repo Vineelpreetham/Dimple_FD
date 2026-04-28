@@ -26,9 +26,12 @@ export function useLenis() {
     });
 
     lenisRef.current = lenis;
+    window.lenis = lenis; // Attach to window for global access
 
     // Sync Lenis with GSAP ScrollTrigger
-    lenis.on('scroll', ScrollTrigger.update);
+    lenis.on('scroll', () => {
+      ScrollTrigger.update();
+    });
 
     gsap.ticker.add((time) => {
       lenis.raf(time * 1000);
@@ -39,6 +42,7 @@ export function useLenis() {
     return () => {
       lenis.destroy();
       lenisRef.current = null;
+      window.lenis = null;
     };
   }, []);
 
