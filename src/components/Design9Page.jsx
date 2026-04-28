@@ -1,4 +1,5 @@
 import React from 'react';
+import { ChevronLeft } from 'lucide-react';
 import { LuxSlider } from './ui/lux-slider';
 
 const design9Images = [
@@ -29,6 +30,12 @@ const Design9Page = ({ onBack }) => {
       
 
       <div className="relative z-10 h-screen w-full">
+        {onBack && (
+          <button onClick={onBack} className="project-back-btn" style={{ position: 'fixed' }}>
+            <ChevronLeft size={18} strokeWidth={1.5} />
+            <span>Back</span>
+          </button>
+        )}
         <LuxSlider images={design9Images} />
       </div>
     </div>

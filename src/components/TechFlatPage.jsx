@@ -5,6 +5,7 @@ import {
   GridItem, 
 } from "./ui/infinite-drag-scroll";
 import { getOptimizedUrl } from '../lib/imageConfig';
+import { ChevronLeft } from 'lucide-react';
 
 const images = [
   { id: 1, alt: "Tech Flat", src: "https://ik.imagekit.io/Nouskun/Dimple/Tech%20flat/Untitled_Artwork%201%20copy.png?updatedAt=1777051674264" },
@@ -44,7 +45,7 @@ const images = [
   { id: 35, alt: "Tech Flat", src: "https://ik.imagekit.io/Nouskun/Dimple/Tech%20flat/Untitled_Artwork%201.png" }
 ];
 
-const TechFlatPage = () => {
+const TechFlatPage = ({ onBack }) => {
 
   return (
     <div className="w-full h-screen overflow-hidden relative">
@@ -75,6 +76,14 @@ const TechFlatPage = () => {
       <div className="absolute top-12 left-0 w-full text-center pointer-events-none z-20">
         <h2 className="section-title text-[#1a2744]">Tech Flat</h2>
       </div>
+
+      {/* Back button */}
+      {onBack && (
+        <button onClick={onBack} className="project-back-btn" style={{ position: 'fixed' }}>
+          <ChevronLeft size={18} strokeWidth={1.5} />
+          <span>Back</span>
+        </button>
+      )}
     </div>
   );
 };

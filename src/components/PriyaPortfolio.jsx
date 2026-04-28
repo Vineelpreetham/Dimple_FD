@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { BackgroundGradientAnimation } from './ui/background-gradient-animation';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import TechFlatPage from './TechFlatPage';
 import { CircularGallery } from "./ui/circular-gallery";
 import BrandProjectsPage from './BrandProjectsPage';
@@ -176,7 +177,7 @@ const PriyaPortfolio = () => {
 
   const showPage = (pageName) => {
     setActivePage(pageName);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: 'instant' });
   };
 
   const goToSlide = useCallback((index) => {
@@ -247,7 +248,7 @@ const PriyaPortfolio = () => {
             />
 
             {/* Portfolio Title */}
-            <div className="absolute top-[25%] left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-[1]" style={{ filter: 'drop-shadow(3px 8px 12px rgba(90,55,66,0.18)) drop-shadow(-1px -1px 2px rgba(255,255,255,0.5))' }}>
+            <div className="absolute top-[40%] left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-[1]" style={{ filter: 'drop-shadow(3px 8px 12px rgba(90,55,66,0.18)) drop-shadow(-1px -1px 2px rgba(255,255,255,0.5))' }}>
               {/* Glassy shimmer overlay — sits on top of gradient text */}
               <div style={{ position: 'relative', display: 'inline-block' }}>
                 <div 
@@ -372,6 +373,24 @@ const PriyaPortfolio = () => {
               })}
             </div>
 
+            {/* Slide Navigation Arrows - flanking the model */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 w-full max-w-[95vw] flex justify-between pointer-events-none">
+              <button 
+                onClick={prevSlide}
+                className="hero-nav-arrow left pointer-events-auto"
+                aria-label="Previous slide"
+              >
+                <ChevronLeft size={36} strokeWidth={1} />
+              </button>
+              <button 
+                onClick={nextSlide}
+                className="hero-nav-arrow right pointer-events-auto"
+                aria-label="Next slide"
+              >
+                <ChevronRight size={36} strokeWidth={1} />
+              </button>
+            </div>
+
             {/* Navigation dots */}
             <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex gap-3">
               {HERO_SLIDES.map((_, i) => (
@@ -402,19 +421,18 @@ const PriyaPortfolio = () => {
           </section>
 
 
-          <section id="projects" className="relative">
-            {/* Sticky Container for Circular Gallery */}
+          {/* ══ Curated Fragments Header + Gallery ══ */}
+          <section id="projects" className="relative bg-[var(--warm-white)]">
+            <div className="reveal text-center px-4 pt-16 pb-4 md:pt-20 md:pb-6 flex flex-col items-center">
+              <p className="section-label !mb-4 md:!mb-6" style={{ justifyContent: 'center' }}>Selected Work</p>
+              <h2 className="section-title">Curated Fragments</h2>
+              <div className="mt-3 md:mt-4">
+                <a href="#" onClick={(e) => { e.preventDefault(); showPage('collections'); }} className="all-collections-link hover:opacity-70 transition-opacity inline-block">All Collections →</a>
+              </div>
+            </div>
             <div className="h-[300vh] relative">
               <div className="sticky top-0 h-screen flex flex-col justify-center items-center overflow-hidden">
-                <div className="reveal z-10 text-center mb-12 absolute top-24 w-full">
-                  <p className="section-label">Selected Work</p>
-                  <h2 className="section-title">Curated Fragments</h2>
-                  <div className="mt-4">
-                    <a href="#" onClick={(e) => { e.preventDefault(); showPage('collections'); }} className="all-collections-link">All Collections →</a>
-                  </div>
-                </div>
-                
-                <div className="w-full h-full pt-20">
+                <div className="w-full h-full">
                   <CircularGallery 
                     items={galleryCollections} 
                     radius={window.innerWidth > 768 ? 700 : 350} 
@@ -577,7 +595,7 @@ const PriyaPortfolio = () => {
                 </div>
               </div>
 
-              {/* Organic Structures - Portrait Card */}
+              {/* Organic Textures - Portrait Card */}
               <div 
                 className="collection-card-glass card-nomadic reveal cursor-pointer group" 
                 style={{ transitionDelay: '0.2s' }}
@@ -585,14 +603,14 @@ const PriyaPortfolio = () => {
               >
                 <div className="collection-card-content">
                   <div className="collection-card-img-wrapper portrait">
-                    <img src="https://ik.imagekit.io/Nouskun/Dimple/organic%20struc/IMG_4645.HEIC?updatedAt=1777140857224" alt="Organic Structures" />
+                    <img src="https://ik.imagekit.io/Nouskun/Dimple/organic%20struc/IMG_4645.HEIC?updatedAt=1777140857224" alt="Organic Textures" />
 
                     <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                       <span className="text-white text-xs uppercase tracking-widest font-bold">View Collection</span>
                     </div>
                   </div>
                   <div className="collection-card-text">
-                    <h3 className="collection-card-title small">ORGANIC STRUCTURES</h3>
+                    <h3 className="collection-card-title small">ORGANIC TEXTURES</h3>
                     <p className="collection-card-desc small">Where Every Collection Takes Its First Breath.</p>
                   </div>
                 </div>
@@ -728,7 +746,7 @@ const PriyaPortfolio = () => {
             fifthColor="100, 220, 255"
             pointerColor="200, 200, 250"
           />
-          <OrganicStructuresPage />
+          <OrganicStructuresPage onBack={() => showPage('collections')} />
           <Footer showPage={showPage} />
         </div>
       )}

@@ -1,6 +1,6 @@
 import React from 'react';
 import { BackgroundGradientAnimation } from './ui/background-gradient-animation';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, ChevronLeft } from 'lucide-react';
 import { getOptimizedUrl } from '../lib/imageConfig';
 
 const brandProjects = [
@@ -86,6 +86,12 @@ const BrandProjectsPage = ({ onBack, onSelectProject }) => {
       </div>
 
       <div className="collections-page-container flex-grow relative z-10 w-full flex flex-col items-center pt-24">
+        {onBack && (
+          <button onClick={onBack} className="project-back-btn">
+            <ChevronLeft size={18} strokeWidth={1.5} />
+            <span>Back</span>
+          </button>
+        )}
         <div className="collections-header w-full flex flex-col items-center mb-16">
           <h2 className="section-title">Brand projects</h2>
         </div>

@@ -154,8 +154,9 @@ nav.priya-nav.nav-scrolled {
 nav.priya-nav .brand {
   font-family: 'Cormorant Garamond', serif;
   font-size: 1.6rem;
-  font-weight: 400;
-  letter-spacing: 0.05em;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   text-decoration: none;
   color: var(--dynamic-nav-color, #8C5B6B);
   transition: color 0.4s ease;
@@ -170,8 +171,10 @@ nav.priya-nav .links {
 nav.priya-nav .links a {
   text-decoration: none;
   color: var(--dynamic-nav-color, #8C5B6B);
-  font-size: 1.2rem;
-  letter-spacing: 0.05em;
+  font-size: 1.1rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
   transition: opacity 0.3s, color 0.4s ease;
   font-family: 'Cormorant Garamond', serif;
 }
@@ -259,6 +262,43 @@ nav.priya-nav .links a:hover, nav.priya-nav .links a.active {
 
 .hero-model-bg.right {
   right: 20%;
+}
+
+/* ── HERO NAVIGATION ARROWS ── */
+.hero-nav-arrow {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--dynamic-nav-color, #8C5B6B);
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
+}
+
+.hero-nav-arrow:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
+  border-color: rgba(255, 255, 255, 0.4);
+  color: var(--dynamic-nav-color, #8C5B6B);
+}
+
+.hero-nav-arrow:active {
+  transform: scale(0.95);
+  transition-duration: 0.2s;
+}
+
+@media (max-width: 768px) {
+  .hero-nav-arrow {
+    width: 48px;
+    height: 48px;
+  }
 }
 
 /* ── SECTION BASE ── */
@@ -1224,4 +1264,44 @@ textarea.form-input { min-height: 120px; }
 @media (max-width: 900px) {
   .contact-v2-main { padding: 100px 28px 60px; }
   .contact-v2-heading { font-size: 52px; }
+}
+
+/* Project Back Button */
+.project-back-btn {
+  position: fixed;
+  top: 100px; /* Below the nav */
+  left: 40px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  padding: 8px 16px;
+  border-radius: 30px;
+  font-family: 'Jost', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--about-ink);
+  cursor: pointer;
+  z-index: 9999;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.project-back-btn:hover {
+  background: rgba(255, 255, 255, 0.8);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+@media (max-width: 768px) {
+  .project-back-btn {
+    top: 80px;
+    left: 20px;
+    padding: 6px 12px;
+    font-size: 11px;
+  }
 }
