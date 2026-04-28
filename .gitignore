@@ -3,6 +3,11 @@ node_modules/
 
 # Build output
 dist/
+.next/
+next-env.d.ts
+
+# Python
+venv/
 
 # Environment files
 .env

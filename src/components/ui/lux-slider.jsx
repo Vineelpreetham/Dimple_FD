@@ -272,7 +272,7 @@ export function LuxSlider({ images = [] }) {
                     muted
                   />
                 ) : (
-                  <img src={getOptimizedUrl(img.src)} className="w-full h-full object-cover" alt="thumb" />
+                  <img src={getOptimizedUrl(img.src)} loading="lazy" className="w-full h-full object-cover" alt="thumb" />
                 )}
                 {idx === currentIndex && (
                   <motion.div 

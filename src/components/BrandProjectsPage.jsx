@@ -99,12 +99,13 @@ const BrandProjectsPage = ({ onBack, onSelectProject }) => {
               key={item.id}
               onClick={() => onSelectProject && onSelectProject(item.id)}
               className="reveal relative w-full block cursor-pointer rounded overflow-hidden group transition-all duration-700 hover:-translate-y-2"
-              style={{ transitionDelay: item.delay }}
+              style={{ transitionDelay: item.delay, willChange: 'transform' }}
             >
               <div className="relative w-full aspect-[16/10] md:aspect-[16/7] overflow-hidden rounded">
-                <img 
-                  src={getOptimizedUrl(item.image)} 
+                <img
+                  src={getOptimizedUrl(item.image)}
                   alt={item.title}
+                  loading="lazy"
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 brightness-90 saturate-90 group-hover:brightness-75 group-hover:saturate-100"
                 />
                 
