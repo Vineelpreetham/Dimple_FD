@@ -311,27 +311,35 @@ const PriyaPortfolio = () => {
                 const styles = {
                   active: {
                     transform: `translateX(-50%) translateZ(0) scale(${slide.modelScale ?? 1.35})`,
+                    left: '50%',
                     opacity: 1,
                     filter: 'blur(0px)',
                     zIndex: 10,
+                    height: slide.modelHeight || '108vh',
                   },
                   prev: {
-                    transform: 'translateX(calc(-50% - 40vw)) translateZ(-200px) scale(0.5)',
+                    transform: 'translateX(-50%) translateZ(-200px) scale(0.5)',
+                    left: '8%',
                     opacity: 0.35,
                     filter: 'blur(2px)',
                     zIndex: 5,
+                    height: '95vh',
                   },
                   next: {
-                    transform: 'translateX(calc(-50% + 40vw)) translateZ(-200px) scale(0.5)',
+                    transform: 'translateX(-50%) translateZ(-200px) scale(0.5)',
+                    left: '92%',
                     opacity: 0.35,
                     filter: 'blur(2px)',
                     zIndex: 5,
+                    height: '95vh',
                   },
                   hidden: {
                     transform: 'translateX(-50%) translateZ(-500px) scale(0.3)',
+                    left: '50%',
                     opacity: 0,
                     filter: 'blur(8px)',
                     zIndex: 1,
+                    height: '95vh',
                   },
                 };
                 
@@ -340,30 +348,32 @@ const PriyaPortfolio = () => {
                 return (
                   <div
                     key={slide.id}
-                    className="absolute cursor-pointer h-[95vh] md:h-[108vh]"
+                    className="absolute cursor-pointer"
                     onClick={() => {
                       if (position === 'next') nextSlide();
                       else if (position === 'prev') prevSlide();
                     }}
                     style={{
-                      left: '50%',
-                      top: slide.modelTop ?? '-8%',
+                      left: s.left,
+                      ...(position === 'active' ? { top: slide.modelTop ?? '-8%' } : { bottom: 0 }),
                       transform: s.transform,
                       opacity: s.opacity,
                       filter: s.filter,
                       zIndex: s.zIndex,
-                      transition: 'transform 0.9s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.9s ease, filter 0.9s ease',
-                      willChange: 'transform, opacity, filter',
-                      transformOrigin: 'top center',
+                      transition: 'transform 0.85s cubic-bezier(0.22, 1, 0.36, 1), left 0.85s cubic-bezier(0.22, 1, 0.36, 1), top 0.85s cubic-bezier(0.22, 1, 0.36, 1), bottom 0.85s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.85s ease, filter 0.85s ease',
+                      willChange: 'transform, opacity, left, top, bottom',
+                      transformOrigin: position === 'active' ? 'top center' : 'center bottom',
                     }}
                   >
                     <img 
                       src={slide.mainImage} 
                       alt="Fashion Model"
-                      className="object-contain w-full h-full"
+                      className="object-contain"
                       style={{ 
+                        height: s.height,
                         filter: position === 'active' ? 'drop-shadow(0 40px 80px rgba(0,0,0,0.35))' : 'none',
-                        transition: 'filter 0.9s ease',
+                        transition: 'height 0.85s cubic-bezier(0.22, 1, 0.36, 1), filter 0.85s ease',
+                        willChange: 'height, filter',
                       }}
                       draggable={false}
                     />
