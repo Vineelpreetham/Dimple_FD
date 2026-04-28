@@ -166,7 +166,7 @@ const Footer = ({ showPage }) => (
       <li><a href="#" onClick={(e) => { e.preventDefault(); showPage('collections'); }}>Collections</a></li>
       <li><a href="#" onClick={(e) => { e.preventDefault(); showPage('contact'); }}>Contact</a></li>
     </ul>
-    <div className="footer-contact"><p>dimple@dimpleshivakumar.com</p></div>
+    <div className="footer-contact"><p>dimpleshivukumar@gmail.com</p></div>
   </footer>
 );
 
@@ -770,7 +770,7 @@ const PriyaPortfolio = () => {
               <p className="contact-v2-subheading">Design grows through connection - let’s connect</p>
               
               <div className="contact-v2-links">
-                <a href="mailto:dimple@dimpleshivakumar.com" className="contact-v2-link">dimple@dimpleshivakumar.com</a>
+                <a href="mailto:dimpleshivukumar@gmail.com" className="contact-v2-link">dimpleshivukumar@gmail.com</a>
                 <a href="tel:+18575066139" className="contact-v2-link">+1 (857) 506-6139</a>
                 <a href="https://www.linkedin.com/in/dimple-shivakumar" target="_blank" rel="noopener noreferrer" className="contact-v2-link">LinkedIn</a>
                 <a href="https://instagram.com/dimpleshivakumar" target="_blank" rel="noopener noreferrer" className="contact-v2-link">Instagram</a>
