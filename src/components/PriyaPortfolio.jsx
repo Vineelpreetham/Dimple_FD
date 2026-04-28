@@ -175,6 +175,14 @@ const PriyaPortfolio = () => {
   const [activeHeroSlide, setActiveHeroSlide] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
+  // Force scroll to top whenever the page changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+  }, [activePage]);
+
+  // Determine if the current page is a main hub page
+  const isMainPage = ['home', 'about', 'collections', 'contact'].includes(activePage);
+
   const showPage = (pageName) => {
     setActivePage(pageName);
     window.scrollTo({ top: 0, behavior: 'instant' });
@@ -225,7 +233,7 @@ const PriyaPortfolio = () => {
 
   return (
     <div className="priya-portfolio-wrapper" style={{ '--dynamic-nav-color': activePage === 'home' ? HERO_SLIDES[activeHeroSlide].navColor : '#4A3728' }}>
-      <Nav activePage={activePage} showPage={showPage} />
+      {isMainPage && <Nav activePage={activePage} showPage={showPage} />}
 
       {/* ═══ HOME PAGE ═══ */}
       {activePage === 'home' && (
@@ -468,7 +476,7 @@ const PriyaPortfolio = () => {
             </div>
             <a href="#" className="ig-cta">Follow Instagram</a>
           </section>
-          <Footer />
+          {isMainPage && <Footer showPage={showPage} />}
         </div>
       )}
 
@@ -517,7 +525,7 @@ const PriyaPortfolio = () => {
             </div>
           </main>
           
-          <Footer showPage={showPage} />
+          {isMainPage && <Footer showPage={showPage} />}
         </div>
       )}
 
@@ -561,7 +569,7 @@ const PriyaPortfolio = () => {
                     <p className="collection-card-desc">Where concepts become identities. A showcase of brand work built from the ground up — bold, intentional, and built to last.</p>
                   </div>
                   <div className="collection-card-img-wrapper">
-                    <img src="https://ik.imagekit.io/Nouskun/Dimple/Brand/5/6.jpg?updatedAt=1777139999924" alt="Brand Projects" />
+                    <img src={getOptimizedUrl("https://ik.imagekit.io/Nouskun/Dimple/Brand/5/6.jpg?updatedAt=1777139999924")} alt="Brand Projects" loading="lazy" />
 
                     <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                       <span className="text-white text-xs uppercase tracking-widest font-bold">View Projects</span>
@@ -579,9 +587,10 @@ const PriyaPortfolio = () => {
                 <div className="collection-card-content">
                   <div className="collection-card-img-wrapper square">
                     <img 
-                      src="https://ik.imagekit.io/Nouskun/Dimple/Tech%20flat/Untitled_Artwork%209.png?updatedAt=1777051493325" 
+                      src={getOptimizedUrl("https://ik.imagekit.io/Nouskun/Dimple/Tech%20flat/Untitled_Artwork%209.png?updatedAt=1777051493325")} 
                       alt="Tech Flat" 
                       className="!object-contain scale-110"
+                      loading="lazy"
                     />
 
                     <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
@@ -603,7 +612,7 @@ const PriyaPortfolio = () => {
               >
                 <div className="collection-card-content">
                   <div className="collection-card-img-wrapper portrait">
-                    <img src="https://ik.imagekit.io/Nouskun/Dimple/organic%20struc/IMG_4645.HEIC?updatedAt=1777140857224" alt="Organic Textures" />
+                    <img src={getOptimizedUrl("https://ik.imagekit.io/Nouskun/Dimple/organic%20struc/IMG_4645.HEIC?updatedAt=1777140857224")} alt="Organic Textures" loading="lazy" />
 
                     <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                       <span className="text-white text-xs uppercase tracking-widest font-bold">View Collection</span>
@@ -621,7 +630,7 @@ const PriyaPortfolio = () => {
               <div className="collection-card-glass card-silent reveal cursor-pointer group" style={{ transitionDelay: '0.4s' }} onClick={() => showPage('design_projects')}>
                 <div className="collection-card-content horizontal">
                   <div className="collection-card-img-wrapper wide">
-                    <img src={getOptimizedUrl("https://ik.imagekit.io/Nouskun/Dimple/design%20/4/2.jpg?updatedAt=1777147098468")} alt="Design Projects" />
+                    <img src={getOptimizedUrl("https://ik.imagekit.io/Nouskun/Dimple/design%20/4/2.jpg?updatedAt=1777147098468")} alt="Design Projects" loading="lazy" />
 
                     <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                       <span className="text-white text-xs uppercase tracking-widest font-bold">View Projects</span>
@@ -635,7 +644,7 @@ const PriyaPortfolio = () => {
               </div>
             </div>
           </div>
-          <Footer showPage={showPage} />
+          {isMainPage && <Footer showPage={showPage} />}
         </div>
       )}
 
@@ -656,7 +665,6 @@ const PriyaPortfolio = () => {
           <div className="relative z-10">
             <TechFlatPage onBack={() => showPage('collections')} />
           </div>
-          <Footer showPage={showPage} />
         </div>
       )}
 
@@ -747,7 +755,7 @@ const PriyaPortfolio = () => {
             pointerColor="200, 200, 250"
           />
           <OrganicStructuresPage onBack={() => showPage('collections')} />
-          <Footer showPage={showPage} />
+          {isMainPage && <Footer showPage={showPage} />}
         </div>
       )}
 
@@ -769,7 +777,7 @@ const PriyaPortfolio = () => {
             </div>
           </main>
           
-          <Footer showPage={showPage} />
+          {isMainPage && <Footer showPage={showPage} />}
         </div>
       )}
     </div>

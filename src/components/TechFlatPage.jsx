@@ -63,6 +63,7 @@ const TechFlatPage = ({ onBack }) => {
               <img
                 src={getOptimizedUrl(image.src, { isTransparent: true })}
                 alt={image.alt}
+                loading="lazy"
                 className={`pointer-events-none absolute h-full w-full object-contain p-2 ${image.customClass || ''}`}
                 style={{ mixBlendMode: 'multiply' }}
               />

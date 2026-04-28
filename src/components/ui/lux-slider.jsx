@@ -247,9 +247,10 @@ export function LuxSlider({ images = [] }) {
           {/* Previous Arrow */}
           <button 
             onClick={() => navigate(-1)}
-            className="p-2 text-white/50 hover:text-white transition-colors group"
+            className="p-3 text-white/70 hover:text-white hover:scale-125 transition-all duration-300 group focus:outline-none"
+            aria-label="Previous slide"
           >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M19 12H5M12 19l-7-7 7-7" />
             </svg>
           </button>
@@ -287,9 +288,10 @@ export function LuxSlider({ images = [] }) {
           {/* Next Arrow */}
           <button 
             onClick={() => navigate(1)}
-            className="p-2 text-white/50 hover:text-white transition-colors"
+            className="p-3 text-white/70 hover:text-white hover:scale-125 transition-all duration-300 group focus:outline-none"
+            aria-label="Next slide"
           >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M5 12h14M12 5l7 7-7 7" />
             </svg>
           </button>
