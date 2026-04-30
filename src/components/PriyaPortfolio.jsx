@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { BackgroundGradientAnimation } from './ui/background-gradient-animation';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import TechFlatPage from './TechFlatPage';

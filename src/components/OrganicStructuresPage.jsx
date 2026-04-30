@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { getOptimizedUrl } from '../lib/imageConfig';
 import { ChevronLeft } from 'lucide-react';
 
@@ -91,78 +91,74 @@ const LINES = [
   {x:72, y:108, l:22, d:'h'},
 ];
 
+/* Lazy video: only loads & plays when visible */
+const LazyVideo = ({ src, alt }) => {
+  const ref = useRef(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setIsVisible(true); obs.disconnect(); } },
+      { rootMargin: '200px' }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+
+  return (
+    <div ref={ref} style={{ width: '100%', height: '100%' }}>
+      {isVisible ? (
+        <video src={src} autoPlay muted loop playsInline preload="none" />
+      ) : null}
+    </div>
+  );
+};
+
 const OrganicStructuresPage = ({ onBack }) => {
   const containerRef = useRef(null);
-  const cursorRef = useRef(null);
-  const ringRef = useRef(null);
+  const piecesRef = useRef([]);
 
-  // Parallax and interactions
   useEffect(() => {
     let ticking = false;
-    
+    // Cache the NodeList once instead of querying every frame
+    const pieces = piecesRef.current;
+
     const handleScroll = () => {
-      if(ticking) return;
+      if (ticking) return;
       window.requestAnimationFrame(() => {
         const sy = window.scrollY;
-        const pieces = document.querySelectorAll('.os-piece');
-        pieces.forEach(el => {
-          const i = parseInt(el.dataset.i || 0);
+        for (let idx = 0; idx < pieces.length; idx++) {
+          const el = pieces[idx];
+          if (!el) continue;
+          const i = idx;
           const r = parseFloat(el.dataset.r || 0);
           const spd = [0.018, 0.032, 0.01][i % 3];
           const drift = Math.sin(sy * 0.0015 + i * 0.9) * 0.5;
-          el.style.transform = `rotate(${r + drift}deg) translateY(${-sy * spd}px)`;
-        });
+          el.style.transform = `rotate(${r + drift}deg) translate3d(0,${-sy * spd}px,0)`;
+        }
         ticking = false;
       });
       ticking = true;
     };
 
-    const handleMouseMove = (e) => {
-      if(cursorRef.current && ringRef.current) {
-        cursorRef.current.style.left = e.clientX - 4 + 'px';
-        cursorRef.current.style.top = e.clientY - 4 + 'px';
-        ringRef.current.style.left = e.clientX + 'px';
-        ringRef.current.style.top = e.clientY + 'px';
-      }
-    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
 
-    const handleMouseOver = (e) => {
-      const p = e.target.closest('.os-piece');
-      if(cursorRef.current && ringRef.current) {
-        if(p){ 
-          cursorRef.current.style.transform='scale(3.5)'; 
-          ringRef.current.style.width='54px'; 
-          ringRef.current.style.height='54px'; 
-          ringRef.current.style.borderColor='#b8845a'; 
-        } else { 
-          cursorRef.current.style.transform='scale(1)';   
-          ringRef.current.style.width='30px'; 
-          ringRef.current.style.height='30px'; 
-          ringRef.current.style.borderColor='#7a5c42'; 
-        }
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll, {passive: true});
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('mouseover', handleMouseOver);
-
-    // Initial trigger for intersection observer (fade in)
+    // Fade-in observer
     const obs = new IntersectionObserver(entries => {
-      entries.forEach(e => { 
-        if(e.isIntersecting){ 
-          e.target.classList.add('vis'); 
-          obs.unobserve(e.target); 
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('vis');
+          obs.unobserve(e.target);
         }
       });
-    }, {threshold: 0.04, rootMargin: '0px 0px -30px 0px'});
-    
-    document.querySelectorAll('.os-piece').forEach(el => obs.observe(el));
+    }, { threshold: 0.04, rootMargin: '0px 0px -30px 0px' });
+
+    pieces.forEach(el => { if (el) obs.observe(el); });
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseover', handleMouseOver);
       obs.disconnect();
     };
   }, []);
@@ -183,21 +179,7 @@ const OrganicStructuresPage = ({ onBack }) => {
           color: var(--ink);
           font-family: 'Cormorant Garamond', serif;
           overflow-x: hidden;
-          min-height: 280vw; /* Accommodate the absolute items */
-          cursor: none;
-        }
-        
-        #os-cur {
-          width: 8px; height: 8px; background: var(--ink); border-radius: 50%;
-          position: fixed; pointer-events: none; z-index: 9999;
-          transition: transform .12s ease; mix-blend-mode: multiply; top: 0; left: 0;
-        }
-        #os-cur-ring {
-          width: 30px; height: 30px; border: 1px solid var(--umber); border-radius: 50%;
-          position: fixed; pointer-events: none; z-index: 9998;
-          transition: left .22s cubic-bezier(.23,1,.32,1), top .22s cubic-bezier(.23,1,.32,1),
-                      width .22s, height .22s, border-color .22s;
-          top: 0; left: 0; transform: translate(-50%,-50%);
+          min-height: 280vw;
         }
 
         .os-nav {
@@ -224,8 +206,10 @@ const OrganicStructuresPage = ({ onBack }) => {
           position: absolute; overflow: hidden; background: var(--dust);
           box-shadow: 0 3px 20px rgba(22,18,13,.12), 0 1px 5px rgba(22,18,13,.07);
           opacity: 0; transform-origin: center center;
-          transition: opacity .9s cubic-bezier(.23,1,.32,1), box-shadow .4s ease, filter .5s ease;
-          will-change: transform, opacity;
+          transition: opacity .9s cubic-bezier(.23,1,.32,1);
+          will-change: transform;
+          contain: layout style paint;
+          backface-visibility: hidden;
         }
         .os-piece.vis { opacity: 1; }
         .os-piece img, .os-piece video {
@@ -277,8 +261,7 @@ const OrganicStructuresPage = ({ onBack }) => {
         }
         
         @media (max-width: 768px) {
-          .os-container { min-height: 450vw; cursor: auto; }
-          #os-cur, #os-cur-ring { display: none; }
+          .os-container { min-height: 450vw; }
           .os-piece { width: calc(var(--w) * 1.8)!important; height: calc(var(--h) * 1.8)!important; left: calc(var(--x) * 1.5 - 20vw)!important; top: calc(var(--y) * 1.8)!important; }
           .os-txt.ghost { font-size: 20vw; }
           .os-txt.idx { font-size: 15vw; }
@@ -300,9 +283,6 @@ const OrganicStructuresPage = ({ onBack }) => {
             `,
           }}
         />
-        <div id="os-cur" ref={cursorRef}></div>
-        <div id="os-cur-ring" ref={ringRef}></div>
-
         <div className="scroll-explore">
           <div className="scroll-explore-line"></div>
           <p className="scroll-explore-text">Scroll to Explore</p>
@@ -320,26 +300,26 @@ const OrganicStructuresPage = ({ onBack }) => {
 
         <div className="os-stage">
           {PIECES.map((p, i) => {
-            const isMassiveDSLR = p.src.includes('DSC00');
-            const optimizedSrc = isMassiveDSLR ? `${p.src.split('?')[0]}?tr=orig` : getOptimizedUrl(p.src);
+            const optimizedSrc = getOptimizedUrl(p.src, { width: 800, quality: 75 });
 
             return (
               <div 
                 key={`piece-${i}`}
                 className="os-piece"
+                ref={el => { piecesRef.current[i] = el; }}
                 data-i={i}
                 data-r={p.r}
                 style={{
                   '--w': `${p.w}vw`, '--h': `${p.h}vw`, '--x': `${p.x}vw`, '--y': `${p.y}vw`,
                   width: `${p.w}vw`, height: `${p.h}vw`, left: `${p.x}vw`, top: `${p.y}vw`,
-                  transform: `rotate(${p.r}deg)`, zIndex: p.z,
+                  transform: `rotate(${p.r}deg) translate3d(0,0,0)`, zIndex: p.z,
                   transitionDelay: `${(i % 6) * 0.055}s`
                 }}
               >
                 {p.t === 'img' ? (
-                  <img src={optimizedSrc} alt={`Organic ${p.label}`} loading="lazy" />
+                  <img src={optimizedSrc} alt={`Organic ${p.label}`} loading="lazy" decoding="async" />
                 ) : (
-                  <video src={optimizedSrc} autoPlay muted loop playsInline />
+                  <LazyVideo src={optimizedSrc} alt={`Organic ${p.label}`} />
                 )}
               </div>
             );
