@@ -15,6 +15,7 @@ export interface GalleryItem {
     pos?: string;
     by: string;
   };
+  pageId?: string;
 }
 
 // Define the props for the CircularGallery component
@@ -24,10 +25,11 @@ interface CircularGalleryProps extends HTMLAttributes<HTMLDivElement> {
   radius?: number;
   /** Controls the speed of auto-rotation when not scrolling. */
   autoRotateSpeed?: number;
+  onItemClick?: (item: GalleryItem) => void;
 }
 
 const CircularGallery = React.forwardRef<HTMLDivElement, CircularGalleryProps>(
-  ({ items, className, radius = 600, autoRotateSpeed = 0.02, ...props }, ref) => {
+  ({ items, className, radius = 600, autoRotateSpeed = 0.02, onItemClick, ...props }, ref) => {
     const [rotation, setRotation] = useState(0);
     const [isScrolling, setIsScrolling] = useState(false);
     const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -116,13 +118,21 @@ const CircularGallery = React.forwardRef<HTMLDivElement, CircularGalleryProps>(
                   transition: 'opacity 0.3s linear'
                 }}
               >
-                <div className="relative w-full h-full rounded-sm shadow-2xl overflow-hidden group border border-white/10 bg-white/5 backdrop-blur-md">
+                <div 
+                  className="relative w-full h-full rounded-sm shadow-2xl overflow-hidden group border border-white/10 bg-white/5 backdrop-blur-md cursor-pointer hover:scale-[1.03] transition-transform duration-300"
+                  onClick={() => onItemClick && onItemClick(item)}
+                >
                   <img
                     src={item.photo.url}
                     alt={item.photo.text}
-                    className="absolute inset-0 w-full h-full object-cover"
+                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     style={{ objectPosition: item.photo.pos || 'center' }}
                   />
+                  
+                  {/* Hover Overlay */}
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                    <span className="text-white text-sm uppercase tracking-widest font-bold">View Project</span>
+                  </div>
                 </div>
               </div>
             );

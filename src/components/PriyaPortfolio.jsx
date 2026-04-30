@@ -28,6 +28,7 @@ const galleryCollections = [
   {
     common: 'Tech Flat',
     binomial: 'Technical Archetypes',
+    pageId: 'tech_flat',
     photo: {
       url: getOptimizedUrl('https://ik.imagekit.io/Nouskun/Dimple/Tech%20flat/Untitled_Artwork%206.png?updatedAt=1777051474874'),
       text: 'Detailed technical sketches and archetypes',
@@ -37,6 +38,7 @@ const galleryCollections = [
   {
     common: 'Design Project 02',
     binomial: 'Selected Works',
+    pageId: 'design_2',
     photo: {
       url: getOptimizedUrl('https://ik.imagekit.io/Nouskun/Dimple/design%20/2/1.jpg?updatedAt=1777147019999'),
       text: 'Conceptual design and pattern exploration',
@@ -46,6 +48,7 @@ const galleryCollections = [
   {
     common: 'Design Project 09',
     binomial: 'Selected Works',
+    pageId: 'design_9',
     photo: {
       url: getOptimizedUrl('https://ik.imagekit.io/Nouskun/Dimple/design%20/5/5.jpg?updatedAt=1777147126273'),
       text: 'Experimental silhouettes and textiles',
@@ -53,8 +56,9 @@ const galleryCollections = [
     }
   },
   {
-    common: 'Organic Structures',
+    common: 'Organic Textures',
     binomial: 'Nature & Geometry',
+    pageId: 'organic_structures',
     photo: {
       url: getOptimizedUrl('https://ik.imagekit.io/Nouskun/Dimple/organic%20struc/IMG_4661.HEIC?updatedAt=1777140857374'),
       text: 'Bio-morphic forms and organic textures',
@@ -64,6 +68,7 @@ const galleryCollections = [
   {
     common: 'Brand Identity 07',
     binomial: 'Curated Fragments',
+    pageId: 'brand_7',
     photo: {
       url: getOptimizedUrl('https://ik.imagekit.io/Nouskun/Dimple/Brand/7/4.jpg?updatedAt=1777140601751'),
       text: 'Strategic brand storytelling and visual systems',
@@ -73,6 +78,7 @@ const galleryCollections = [
   {
     common: 'Brand Identity 03',
     binomial: 'Curated Fragments',
+    pageId: 'brand_3',
     photo: {
       url: getOptimizedUrl('https://ik.imagekit.io/Nouskun/Dimple/Brand/3/1.jpg?updatedAt=1777066868729'),
       text: 'Editorial branding and graphic narrative',
@@ -464,6 +470,9 @@ const PriyaPortfolio = () => {
                     items={galleryCollections} 
                     radius={window.innerWidth > 768 ? 700 : 350} 
                     autoRotateSpeed={0.01}
+                    onItemClick={(item) => {
+                      if (item.pageId) showPage(item.pageId);
+                    }}
                   />
                 </div>
               </div>
@@ -473,7 +482,7 @@ const PriyaPortfolio = () => {
           <section id="instagram">
             <div className="ig-header reveal">
               <p className="section-label" style={{ justifyContent: 'center' }}>Follow Along</p>
-              <h2 className="section-title">@dimpleshivakumar</h2>
+              <h2 className="section-title">@sketchstorybydimple</h2>
               <p className="ig-intro-text">
                 Behind the seams — sketches, fittings, and moments from the atelier.
               </p>
@@ -493,7 +502,7 @@ const PriyaPortfolio = () => {
                 </a>
               ))}
             </div>
-            <a href="#" className="ig-cta">Follow Instagram</a>
+            <a href="https://www.instagram.com/sketchstorybydimple?igsh=ZmIxMXFqZDFtZDdr" target="_blank" rel="noopener noreferrer" className="ig-cta">Follow Instagram</a>
           </section>
           {isMainPage && <Footer showPage={showPage} />}
         </div>
@@ -789,9 +798,9 @@ const PriyaPortfolio = () => {
               
               <div className="contact-v2-links">
                 <a href="mailto:dimpleshivukumar@gmail.com" className="contact-v2-link">dimpleshivukumar@gmail.com</a>
-                <a href="tel:+18575066139" className="contact-v2-link">+1 (857) 506-6139</a>
+                <a href="tel:+12153917421" className="contact-v2-link">(215) 391-7421</a>
                 <a href="https://www.linkedin.com/in/dimple-shivakumar" target="_blank" rel="noopener noreferrer" className="contact-v2-link">LinkedIn</a>
-                <a href="https://instagram.com/dimpleshivakumar" target="_blank" rel="noopener noreferrer" className="contact-v2-link">Instagram</a>
+                <a href="https://www.instagram.com/sketchstorybydimple?igsh=ZmIxMXFqZDFtZDdr" target="_blank" rel="noopener noreferrer" className="contact-v2-link">Instagram</a>
               </div>
             </div>
           </main>

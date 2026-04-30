@@ -83,15 +83,9 @@ export function LuxSlider({ images = [] }) {
     };
     window.addEventListener('keydown', handleKeyDown);
 
-    // Auto-advance loop
-    const autoPlay = setInterval(() => {
-      navigate(1);
-    }, 6000);
-
     return () => {
       window.removeEventListener("wheel", handleWheel);
       window.removeEventListener('keydown', handleKeyDown);
-      clearInterval(autoPlay);
     };
   }, [handleWheel, navigate]);
 
