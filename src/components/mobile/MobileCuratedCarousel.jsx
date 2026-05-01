@@ -39,13 +39,14 @@ const SLIDES = [
 const ANIM_MS = 520;
 
 export default function MobileCuratedCarousel({ onSelectPage }) {
-  const [curr, setCurr]   = useState(0);
-  const [exiting, setExiting] = useState(null); // { idx, dir }
-  const [dir, setDir]     = useState(1);
-  const busy = useRef(false);
-  const touchStart = useRef(null);
-  const touchEnd   = useRef(null);
-  const MIN_SWIPE  = 44;
+  const [curr, setCurr]       = useState(0);
+  const [exiting, setExiting] = useState(null);
+  const [dir, setDir]         = useState(1);
+  const busy    = useRef(false);
+  const rootRef = useRef(null);
+  const touchPos = useRef(null); // { x, y }
+  const locked   = useRef(null); // 'h' | 'v' | null
+  const MIN_SWIPE = 44;
 
   const go = useCallback((next, d) => {
     if (busy.current) return;
@@ -58,27 +59,54 @@ export default function MobileCuratedCarousel({ onSelectPage }) {
     setTimeout(() => { setExiting(null); busy.current = false; }, ANIM_MS);
   }, [curr]);
 
-  const next = () => go(curr + 1,  1);
-  const prev = () => go(curr - 1, -1);
+  const next = useCallback(() => go(curr + 1,  1), [go, curr]);
+  const prev = useCallback(() => go(curr - 1, -1), [go, curr]);
 
-  const onTouchStart = (e) => { touchStart.current = e.touches[0].clientX; };
-  const onTouchMove  = (e) => { touchEnd.current   = e.touches[0].clientX; };
-  const onTouchEnd   = () => {
-    if (touchStart.current == null || touchEnd.current == null) return;
-    const delta = touchStart.current - touchEnd.current;
-    if (Math.abs(delta) >= MIN_SWIPE) delta > 0 ? next() : prev();
-    touchStart.current = null;
-    touchEnd.current   = null;
-  };
+  // Non-passive listeners — intercept horizontal swipes, let vertical pass through
+  useEffect(() => {
+    const el = rootRef.current;
+    if (!el) return;
+
+    const onStart = (e) => {
+      touchPos.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      locked.current = null;
+    };
+    const onMove = (e) => {
+      if (!touchPos.current) return;
+      const dx = Math.abs(e.touches[0].clientX - touchPos.current.x);
+      const dy = Math.abs(e.touches[0].clientY - touchPos.current.y);
+      if (!locked.current) {
+        if (dx > dy + 4)      locked.current = 'h';
+        else if (dy > dx + 4) locked.current = 'v';
+        else return;
+      }
+      if (locked.current === 'h') e.preventDefault();
+    };
+    const onEnd = (e) => {
+      if (!touchPos.current || locked.current !== 'h') {
+        touchPos.current = null; locked.current = null; return;
+      }
+      const delta = touchPos.current.x - e.changedTouches[0].clientX;
+      if (Math.abs(delta) >= MIN_SWIPE) delta > 0 ? next() : prev();
+      touchPos.current = null; locked.current = null;
+    };
+
+    el.addEventListener('touchstart', onStart, { passive: true });
+    el.addEventListener('touchmove',  onMove,  { passive: false });
+    el.addEventListener('touchend',   onEnd,   { passive: true });
+    return () => {
+      el.removeEventListener('touchstart', onStart);
+      el.removeEventListener('touchmove',  onMove);
+      el.removeEventListener('touchend',   onEnd);
+    };
+  }, [next, prev]);
 
   const slide = SLIDES[curr];
 
   return (
     <div
+      ref={rootRef}
       className="mcc-root"
-      onTouchStart={onTouchStart}
-      onTouchMove={onTouchMove}
-      onTouchEnd={onTouchEnd}
     >
       {/* Stage — fixed height, clips everything */}
       <div className="mcc-stage">
