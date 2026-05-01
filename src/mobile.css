@@ -1174,156 +1174,307 @@
 .mco-back:active { color: #3A2E2E; }
 
 /* ─────────────────────────────────────────────
-   CURATED CAROUSEL (mcc-*)
+   CURATED CAROUSEL — LuxSlider-inspired (mcc-*)
    ───────────────────────────────────────────── */
 
-/* Outer wrapper */
+/* ── Keyframe animations — mirrors desktop LuxSlider ── */
+@keyframes mcc-in-right {
+  from {
+    transform: translateX(100%) scale(1.1);
+    opacity: 0;
+    filter: blur(10px);
+  }
+  to {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+@keyframes mcc-in-left {
+  from {
+    transform: translateX(-100%) scale(1.1);
+    opacity: 0;
+    filter: blur(10px);
+  }
+  to {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+@keyframes mcc-out-left {
+  from {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+    filter: blur(0);
+  }
+  to {
+    transform: translateX(-55%) scale(0.9);
+    opacity: 0;
+    filter: blur(10px);
+  }
+}
+@keyframes mcc-out-right {
+  from {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+    filter: blur(0);
+  }
+  to {
+    transform: translateX(55%) scale(0.9);
+    opacity: 0;
+    filter: blur(10px);
+  }
+}
+
+/* Root */
 .mcc-root {
   width: 100%;
-  overflow: hidden;
+  background: #FAF6F2;
   touch-action: pan-y;
   user-select: none;
-  background: #FAF6F2;
+  font-family: 'Cormorant Garamond', serif;
 }
 
-/* Horizontal flex track — all slides live here */
-.mcc-track {
-  display: flex;
+/* Stage — MUST have a fixed height so absolute children are visible */
+.mcc-stage {
+  position: relative;
   width: 100%;
-  transition: transform 0.42s cubic-bezier(0.32, 0.72, 0, 1);
-  will-change: transform;
+  height: 72svh;
+  overflow: hidden;
 }
 
-/* Each slide occupies exactly 100% of the container width */
+/* Slide — fills the stage */
 .mcc-slide {
-  flex: 0 0 100%;
+  position: absolute;
+  inset: 0;
   width: 100%;
-  min-width: 100%;
+  height: 100%;
 }
 
-/* Card button fills the slide */
+/* Animation classes */
+.mcc-slide--enter-right {
+  animation: mcc-in-right 0.52s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.mcc-slide--enter-left {
+  animation: mcc-in-left 0.52s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.mcc-slide--exit-left {
+  animation: mcc-out-left 0.42s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  z-index: 0;
+  pointer-events: none;
+}
+.mcc-slide--exit-right {
+  animation: mcc-out-right 0.42s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Card button — fills the slide */
 .mcc-card {
-  display: flex;
-  flex-direction: column;
+  display: block;
   width: 100%;
+  height: 100%;
   background: none;
   border: none;
   padding: 0;
-  text-align: left;
   cursor: pointer;
-}
-.mcc-card:active { opacity: 0.92; }
-
-/* Image area */
-.mcc-img {
-  width: 100%;
-  aspect-ratio: 3 / 2;
-  overflow: hidden;
   position: relative;
+}
+
+/* Image — fills the card */
+.mcc-img {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
 }
 .mcc-img img {
   width: 100%;
   height: 100%;
   display: block;
 }
-
-/* Text body */
-.mcc-body {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 0.75rem;
-  padding: 1rem 1.25rem 0.75rem;
+/* Inner depth overlay — like desktop's gradient-to-t from-black/20 */
+.mcc-img-inner {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(20,10,5,0.72) 0%, rgba(20,10,5,0.12) 50%, rgba(255,255,255,0.04) 100%);
+  pointer-events: none;
 }
 
-.mcc-num {
-  display: block;
-  font-family: 'Jost', sans-serif;
-  font-size: 0.46rem;
-  letter-spacing: 0.3em;
-  color: #C8A882;
-  margin-bottom: 0.2rem;
-}
-.mcc-sub {
-  display: block;
-  font-family: 'Jost', sans-serif;
-  font-size: 0.48rem;
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
-  color: #A89898;
-  margin-bottom: 0.3rem;
+/* Info — pinned to bottom of image, like desktop */
+.mcc-info {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1.25rem 1.25rem 1rem;
+  z-index: 2;
+  pointer-events: none;
 }
 .mcc-title {
   font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(1.5rem, 6vw, 2.2rem);
+  font-size: clamp(1.6rem, 7vw, 2.6rem);
   font-weight: 300;
-  color: #3A2E2E;
-  line-height: 1.1;
+  color: #fff;
+  line-height: 1.05;
   margin: 0 0 0.35rem;
 }
 .mcc-desc {
-  font-size: 0.72rem;
-  color: #6B5D5D;
-  line-height: 1.75;
-  margin: 0;
-}
-.mcc-cta {
-  display: inline-block;
+  font-size: 0.7rem;
   font-family: 'Jost', sans-serif;
-  font-size: 0.5rem;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: #8C5B6B;
-  border-bottom: 1px solid #8C5B6B;
-  padding-bottom: 0.1rem;
-  align-self: flex-start;
+  color: rgba(255,255,255,0.6);
+  line-height: 1.7;
+  margin: 0;
+  max-width: 260px;
 }
 
-/* Bottom bar */
+/* ── Big counter — top-left overlay like desktop ── */
+.mcc-counter {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  z-index: 10;
+  pointer-events: none;
+  display: flex;
+  align-items: flex-end;
+  gap: 0.6rem;
+  animation: mcc-in-right 0.45s cubic-bezier(0.22,1,0.36,1) both;
+}
+.mcc-counter-big {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(4rem, 18vw, 7rem);
+  font-weight: 300;
+  line-height: 1;
+  color: rgba(255,255,255,0.88);
+  text-shadow: 0 4px 24px rgba(0,0,0,0.3);
+  letter-spacing: -0.04em;
+}
+.mcc-counter-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-bottom: 0.6rem;
+  border-left: 1px solid rgba(255,255,255,0.2);
+  padding-left: 0.6rem;
+}
+.mcc-counter-sub {
+  font-family: 'Jost', sans-serif;
+  font-size: 0.44rem;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.5);
+}
+.mcc-counter-vol {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.65rem;
+  font-style: italic;
+  color: rgba(255,255,255,0.25);
+}
+
+/* ── Vertical scroll hint — right side like desktop ── */
+.mcc-scroll-hint {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  pointer-events: none;
+  writing-mode: vertical-rl;
+  font-family: 'Jost', sans-serif;
+  font-size: 0.4rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.22);
+}
+
+/* ── Glass bottom bar — mirrors desktop floating bar ── */
 .mcc-bar {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.6rem 1.25rem 1rem;
-  border-top: 1px solid rgba(58,46,46,0.07);
+  gap: 0.75rem;
+  padding: 0.75rem 1rem 0.75rem;
+  background: rgba(250,246,242,0.9);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid rgba(58,46,46,0.06);
+  box-shadow: 0 -8px 24px rgba(58,46,46,0.06);
+}
+
+.mcc-progress {
+  position: absolute;
+  top: 0;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: rgba(58,46,46,0.08);
+}
+.mcc-progress-fill {
+  height: 100%;
+  background: rgba(58,46,46,0.35);
+  transition: width 0.45s cubic-bezier(0.16,1,0.3,1);
 }
 
 .mcc-arrow {
   background: none;
-  border: 1px solid rgba(58,46,46,0.15);
-  width: 38px;
-  height: 38px;
+  border: 1px solid rgba(58,46,46,0.14);
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  font-size: 1rem;
   color: #3A2E2E;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  transition: background 0.2s, color 0.2s;
+  transition: background 0.18s, color 0.18s, border-color 0.18s;
 }
-.mcc-arrow:active { background: #3A2E2E; color: #FAF6F2; }
+.mcc-arrow:active { background: #3A2E2E; color: #FAF6F2; border-color: #3A2E2E; }
 
-.mcc-pips {
+/* Thumbnails */
+.mcc-thumbs {
   display: flex;
-  gap: 5px;
+  gap: 6px;
   align-items: center;
+  flex: 1;
+  justify-content: center;
 }
-.mcc-pip {
-  width: 18px;
-  height: 2px;
-  background: rgba(58,46,46,0.12);
-  border: none;
+.mcc-thumb {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid rgba(58,46,46,0.1);
   padding: 0;
+  background: none;
   cursor: pointer;
-  border-radius: 1px;
-  transition: background 0.3s, width 0.3s;
+  transition: transform 0.25s ease, border-color 0.25s ease, opacity 0.25s ease;
+  opacity: 0.4;
 }
-.mcc-pip--on {
-  background: #8C5B6B;
-  width: 30px;
+.mcc-thumb img {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.mcc-thumb--on {
+  transform: scale(1.14);
+  opacity: 1;
+  border-color: rgba(58,46,46,0.35);
+  z-index: 1;
+}
+.mcc-thumb-ring {
+  position: absolute;
+  inset: 0;
+  border: 2px solid #8C5B6B;
+  border-radius: 8px;
+  pointer-events: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .mcc-track { transition: none; }
+  .mcc-slide--enter-right,
+  .mcc-slide--enter-left,
+  .mcc-slide--exit-left,
+  .mcc-slide--exit-right,
+  .mcc-counter { animation: none; opacity: 1; transform: none; filter: none; }
 }

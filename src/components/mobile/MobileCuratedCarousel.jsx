@@ -1,13 +1,13 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 
 const SLIDES = [
   {
     id: 'brand_projects',
     title: 'Brand Projects',
-    sub: 'Curated Fragments',
+    sub: 'Editorial Archive',
     num: '01',
     desc: 'Concepts become identities — bold, intentional, built to last.',
-    img: 'https://ik.imagekit.io/Nouskun/Dimple/Brand/5/6.jpg?tr=f-auto,q-70,w-900',
+    img: 'https://ik.imagekit.io/Nouskun/Dimple/Brand/5/6.jpg?tr=f-auto,q-75,w-1000',
   },
   {
     id: 'design_projects',
@@ -15,7 +15,7 @@ const SLIDES = [
     sub: 'Selected Works',
     num: '02',
     desc: 'Concepts crafted into visual stories worth telling.',
-    img: 'https://ik.imagekit.io/Nouskun/Dimple/design%20/4/2.jpg?tr=f-auto,q-70,w-900',
+    img: 'https://ik.imagekit.io/Nouskun/Dimple/design%20/4/2.jpg?tr=f-auto,q-75,w-1000',
   },
   {
     id: 'tech_flat',
@@ -23,7 +23,7 @@ const SLIDES = [
     sub: 'Technical Archetypes',
     num: '03',
     desc: 'Silhouettes before stitches — precise technical drawings.',
-    img: 'https://ik.imagekit.io/Nouskun/Dimple/Tech%20flat/Untitled_Artwork%209.png?tr=f-auto,q-70,w-900',
+    img: 'https://ik.imagekit.io/Nouskun/Dimple/Tech%20flat/Untitled_Artwork%209.png?tr=f-auto,q-75,w-1000',
     contain: true,
   },
   {
@@ -32,38 +32,46 @@ const SLIDES = [
     sub: 'Nature & Geometry',
     num: '04',
     desc: 'Bio-morphic forms where every collection begins.',
-    img: 'https://ik.imagekit.io/Nouskun/Dimple/organic%20struc/IMG_4645.HEIC?tr=f-auto,q-70,w-900',
+    img: 'https://ik.imagekit.io/Nouskun/Dimple/organic%20struc/IMG_4645.HEIC?tr=f-auto,q-75,w-1000',
   },
 ];
 
+const ANIM_MS = 520;
+
 export default function MobileCuratedCarousel({ onSelectPage }) {
-  const [idx, setIdx]   = useState(0);
-  const [busy, setBusy] = useState(false);
+  const [curr, setCurr]   = useState(0);
+  const [exiting, setExiting] = useState(null); // { idx, dir }
+  const [dir, setDir]     = useState(1);
+  const busy = useRef(false);
   const touchStart = useRef(null);
   const touchEnd   = useRef(null);
   const MIN_SWIPE  = 44;
 
-  const go = useCallback((next) => {
-    if (busy) return;
+  const go = useCallback((next, d) => {
+    if (busy.current) return;
     const c = (next + SLIDES.length) % SLIDES.length;
-    if (c === idx) return;
-    setBusy(true);
-    setIdx(c);
-    setTimeout(() => setBusy(false), 420);
-  }, [busy, idx]);
+    if (c === curr) return;
+    busy.current = true;
+    setDir(d);
+    setExiting({ idx: curr, dir: d });
+    setCurr(c);
+    setTimeout(() => { setExiting(null); busy.current = false; }, ANIM_MS);
+  }, [curr]);
 
-  const next = () => go(idx + 1);
-  const prev = () => go(idx - 1);
+  const next = () => go(curr + 1,  1);
+  const prev = () => go(curr - 1, -1);
 
   const onTouchStart = (e) => { touchStart.current = e.touches[0].clientX; };
   const onTouchMove  = (e) => { touchEnd.current   = e.touches[0].clientX; };
   const onTouchEnd   = () => {
-    if (!touchStart.current || !touchEnd.current) return;
+    if (touchStart.current == null || touchEnd.current == null) return;
     const delta = touchStart.current - touchEnd.current;
     if (Math.abs(delta) >= MIN_SWIPE) delta > 0 ? next() : prev();
     touchStart.current = null;
     touchEnd.current   = null;
   };
+
+  const slide = SLIDES[curr];
 
   return (
     <div
@@ -72,61 +80,103 @@ export default function MobileCuratedCarousel({ onSelectPage }) {
       onTouchMove={onTouchMove}
       onTouchEnd={onTouchEnd}
     >
-      {/* Horizontal track — all slides side-by-side, slide via translateX */}
-      <div
-        className="mcc-track"
-        style={{ transform: `translateX(-${idx * 100}%)` }}
-      >
-        {SLIDES.map((slide, i) => (
-          <div className="mcc-slide" key={slide.id}>
-            <button
-              className="mcc-card"
-              onClick={() => onSelectPage(slide.id)}
-              tabIndex={i === idx ? 0 : -1}
-            >
-              {/* Image */}
-              <div className="mcc-img" style={{ background: slide.contain ? '#f5f5f0' : '#1a1a1a' }}>
-                <img
-                  src={slide.img}
-                  alt={slide.title}
-                  loading={i === 0 ? 'eager' : 'lazy'}
-                  decoding="async"
-                  style={{ objectFit: slide.contain ? 'contain' : 'cover' }}
-                />
-              </div>
+      {/* Stage — fixed height, clips everything */}
+      <div className="mcc-stage">
 
-              {/* Text */}
-              <div className="mcc-body">
-                <div>
-                  <span className="mcc-num">{slide.num} / {String(SLIDES.length).padStart(2,'0')}</span>
-                  <span className="mcc-sub">{slide.sub}</span>
-                  <h3 className="mcc-title">{slide.title}</h3>
-                  <p className="mcc-desc">{slide.desc}</p>
-                </div>
-                <span className="mcc-cta">View Collection →</span>
-              </div>
-            </button>
+        {/* Exiting slide */}
+        {exiting !== null && (
+          <div
+            key={`exit-${exiting.idx}`}
+            className={`mcc-slide mcc-slide--exit-${exiting.dir > 0 ? 'left' : 'right'}`}
+          >
+            <SlideCard slide={SLIDES[exiting.idx]} onSelect={onSelectPage} />
           </div>
-        ))}
+        )}
+
+        {/* Entering / active slide */}
+        <div
+          key={`enter-${curr}`}
+          className={`mcc-slide mcc-slide--enter-${dir > 0 ? 'right' : 'left'}`}
+        >
+          <SlideCard slide={slide} onSelect={onSelectPage} />
+        </div>
+
+        {/* Big number overlay — top-left like desktop */}
+        <div className="mcc-counter" key={curr}>
+          <span className="mcc-counter-big">{slide.num}</span>
+          <div className="mcc-counter-meta">
+            <span className="mcc-counter-sub">{slide.sub}</span>
+            <span className="mcc-counter-vol">Volume 0.1</span>
+          </div>
+        </div>
+
+        {/* Scroll hint — vertical text right side like desktop */}
+        <div className="mcc-scroll-hint">Swipe to explore</div>
       </div>
 
-      {/* Bottom bar */}
+      {/* Glass bottom bar */}
       <div className="mcc-bar">
-        <button className="mcc-arrow" onClick={prev} aria-label="Previous">←</button>
+        <button className="mcc-arrow" onClick={prev} aria-label="Previous">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <path d="M19 12H5M12 19l-7-7 7-7" />
+          </svg>
+        </button>
 
-        <div className="mcc-pips">
-          {SLIDES.map((_, i) => (
+        {/* Thumbnails */}
+        <div className="mcc-thumbs">
+          {SLIDES.map((s, i) => (
             <button
               key={i}
-              className={`mcc-pip${i === idx ? ' mcc-pip--on' : ''}`}
-              onClick={() => go(i)}
-              aria-label={`Slide ${i + 1}`}
-            />
+              className={`mcc-thumb${i === curr ? ' mcc-thumb--on' : ''}`}
+              onClick={() => go(i, i > curr ? 1 : -1)}
+              aria-label={s.title}
+            >
+              <img src={s.img} alt={s.title} loading="lazy" decoding="async"
+                style={{ objectFit: s.contain ? 'contain' : 'cover' }} />
+              {i === curr && <div className="mcc-thumb-ring" />}
+            </button>
           ))}
         </div>
 
-        <button className="mcc-arrow" onClick={next} aria-label="Next">→</button>
+        {/* Progress line */}
+        <div className="mcc-progress">
+          <div
+            className="mcc-progress-fill"
+            style={{ width: `${((curr + 1) / SLIDES.length) * 100}%` }}
+          />
+        </div>
+
+        <button className="mcc-arrow" onClick={next} aria-label="Next">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <path d="M5 12h14M12 5l7 7-7 7" />
+          </svg>
+        </button>
       </div>
     </div>
+  );
+}
+
+function SlideCard({ slide, onSelect }) {
+  return (
+    <button className="mcc-card" onClick={() => onSelect(slide.id)}>
+      {/* Full bleed image */}
+      <div className="mcc-img" style={{ background: slide.contain ? '#f0ede8' : '#16100c' }}>
+        <img
+          src={slide.img}
+          alt={slide.title}
+          loading="lazy"
+          decoding="async"
+          style={{ objectFit: slide.contain ? 'contain' : 'cover' }}
+        />
+        {/* Inner glow/depth overlay like desktop */}
+        <div className="mcc-img-inner" />
+      </div>
+
+      {/* Title overlay pinned to bottom of image */}
+      <div className="mcc-info">
+        <h3 className="mcc-title">{slide.title}</h3>
+        <p className="mcc-desc">{slide.desc}</p>
+      </div>
+    </button>
   );
 }
