@@ -13,8 +13,9 @@ import MobileDesignProjects from './MobileDesignProjects';
 import MobileSwipeGallery   from './MobileSwipeGallery';
 import { BRAND_GALLERIES, DESIGN_GALLERIES, ORGANIC_GALLERY } from './galleryData';
 
-// Heavy desktop sub-pages — only TechFlat still uses desktop component
-const TechFlatPage = lazy(() => import('../TechFlatPage'));
+// Desktop sub-pages used on mobile as-is
+const TechFlatPage          = lazy(() => import('../TechFlatPage'));
+const OrganicStructuresPage = lazy(() => import('../OrganicStructuresPage'));
 
 // Background gradient — lazy
 const BGA = lazy(() =>
@@ -103,13 +104,9 @@ export default function MobilePortfolio() {
   if (page === 'organic_structures') {
     return (
       <div className="mp-root">
-        <MobileSwipeGallery
-          title={ORGANIC_GALLERY.title}
-          label={ORGANIC_GALLERY.label}
-          items={ORGANIC_GALLERY.items}
-          bg={ORGANIC_GALLERY.bg}
-          onBack={() => go('collections')}
-        />
+        <Suspense fallback={<Loader />}>
+          <OrganicStructuresPage onBack={() => go('collections')} />
+        </Suspense>
       </div>
     );
   }
