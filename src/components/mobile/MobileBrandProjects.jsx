@@ -67,7 +67,13 @@ function BrandCard({ project, onSelect, index }) {
     const el = ref.current;
     if (!el) return;
     const obs = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) { el.classList.add('mbp-card--visible'); obs.disconnect(); } },
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          el.classList.add('mbp-card--visible');
+          setTimeout(() => { el.style.willChange = 'auto'; }, 450);
+          obs.disconnect();
+        }
+      },
       { threshold: 0.1 }
     );
     obs.observe(el);
@@ -87,6 +93,7 @@ function BrandCard({ project, onSelect, index }) {
           src={getOptimizedUrl(project.image)}
           alt={project.title}
           loading="lazy"
+          decoding="async"
         />
         {/* Gradient overlay always visible on mobile (no hover) */}
         <div className="mbp-card-overlay" />

@@ -20,7 +20,13 @@ function DesignCard({ project, onSelect, index }) {
     const el = ref.current;
     if (!el) return;
     const obs = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) { el.classList.add('mbp-card--visible'); obs.disconnect(); } },
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          el.classList.add('mbp-card--visible');
+          setTimeout(() => { el.style.willChange = 'auto'; }, 450);
+          obs.disconnect();
+        }
+      },
       { threshold: 0.1 }
     );
     obs.observe(el);
@@ -35,7 +41,7 @@ function DesignCard({ project, onSelect, index }) {
       onClick={() => onSelect(project.id)}
     >
       <div className="mbp-card-img">
-        <img src={getOptimizedUrl(project.image)} alt={project.title} loading="lazy" />
+        <img src={getOptimizedUrl(project.image)} alt={project.title} loading="lazy" decoding="async" />
         <div className="mbp-card-overlay" />
         <div className="mbp-card-info">
           <span className="mbp-card-brand">Design</span>

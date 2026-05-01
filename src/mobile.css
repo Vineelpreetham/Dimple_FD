@@ -4,10 +4,24 @@
    Desktop styles above: UNTOUCHED.
    ═══════════════════════════════════════════════════════════════ */
 
-/* ── Reset tap highlight on iOS ── */
+/* ── Global performance reset ── */
 .mp-root * {
   -webkit-tap-highlight-color: transparent;
   -webkit-touch-callout: none;
+  box-sizing: border-box;
+}
+
+/* Eliminate 300ms tap delay on ALL buttons & links */
+.mp-root button,
+.mp-root a,
+.mp-root [role="button"] {
+  touch-action: manipulation;
+  cursor: pointer;
+}
+
+/* Prevent overscroll bounce on inner containers */
+.mp-root {
+  overscroll-behavior: none;
 }
 
 /* ── Root shell ── */
@@ -275,18 +289,17 @@
   position: absolute;
   bottom: 0;
   left: 50%;
-  transform: translateX(-50%);
   height: 88svh;
   width: auto;
   object-fit: contain;
   pointer-events: none;
-  transition: opacity 0.5s ease;
-  will-change: opacity;
-  /* GPU-composited layer */
+  transition: opacity 0.45s ease;
+  /* Single GPU layer — only on the hero images */
+  transform: translateX(-50%) translateZ(0);
   -webkit-transform: translateX(-50%) translateZ(0);
-          transform: translateX(-50%) translateZ(0);
-  /* Subtle drop shadow — no blend mode */
-  filter: drop-shadow(0 20px 40px rgba(58,46,46,0.2));
+  will-change: opacity;
+  filter: drop-shadow(0 16px 32px rgba(58,46,46,0.18));
+  decoding: async;
 }
 
 /* Dot indicators */
@@ -444,12 +457,11 @@
   border: none;
   border-bottom: 1px solid rgba(58,46,46,0.07);
   padding: 0;
-  cursor: pointer;
   text-align: left;
   opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.16,1,0.3,1);
-  will-change: opacity, transform;
+  transform: translateY(16px);
+  /* will-change only while transitioning — removed after IO fires */
+  transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.16,1,0.3,1);
 }
 /* IO adds this class */
 .mc-card--visible {
@@ -468,9 +480,9 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.4s ease;
-  will-change: transform;
   display: block;
+  /* No will-change here — only applied on :active via JS */
+  transition: transform 0.35s ease;
 }
 
 .mc-card-body {
@@ -855,12 +867,10 @@
   border: none;
   border-bottom: 1px solid rgba(58,46,46,0.06);
   padding: 0;
-  cursor: pointer;
   text-align: left;
   opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.16,1,0.3,1);
-  will-change: opacity, transform;
+  transform: translateY(16px);
+  transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.16,1,0.3,1);
 }
 .mbp-card--visible {
   opacity: 1;
@@ -873,13 +883,15 @@
   width: 100%;
   aspect-ratio: 4 / 3;
   overflow: hidden;
+  /* Clip without GPU promotion */
+  contain: layout paint;
 }
 .mbp-card-img img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
-  transition: transform 0.4s ease;
+  transition: transform 0.35s ease;
 }
 .mbp-card:active .mbp-card-img img { transform: scale(1.03); }
 
@@ -1113,6 +1125,7 @@
   color: rgba(255,255,255,0.35);
   white-space: nowrap;
   pointer-events: none;
+  touch-action: none;
 }
 
 @media (prefers-reduced-motion: reduce) {

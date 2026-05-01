@@ -39,8 +39,15 @@ function Card({ col, onSelect, index }) {
     const el = ref.current;
     if (!el) return;
     const obs = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) { el.classList.add('mc-card--visible'); obs.disconnect(); } },
-      { threshold: 0.15 }
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          el.classList.add('mc-card--visible');
+          // Free GPU memory once animation is done
+          setTimeout(() => { el.style.willChange = 'auto'; }, 450);
+          obs.disconnect();
+        }
+      },
+      { threshold: 0.1 }
     );
     obs.observe(el);
     return () => obs.disconnect();
@@ -58,6 +65,7 @@ function Card({ col, onSelect, index }) {
           src={col.img}
           alt={col.title}
           loading="lazy"
+          decoding="async"
           style={{ objectFit: col.contain ? 'contain' : 'cover' }}
         />
       </div>

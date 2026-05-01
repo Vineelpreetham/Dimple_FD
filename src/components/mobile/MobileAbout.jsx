@@ -9,6 +9,7 @@ export default function MobileAbout() {
           src="https://ik.imagekit.io/Nouskun/Dimple/WhatsApp%20Image%202026-04-22%20at%2020.29.30.jpeg?tr=f-auto,q-75,w-900"
           alt="Dimple Shivakumar"
           loading="lazy"
+          decoding="async"
         />
         <div className="ma-photo-tag">Designer &amp; Visionary</div>
       </div>
