@@ -1176,8 +1176,9 @@
 /* ─────────────────────────────────────────────
    CURATED CAROUSEL (mcc-*)
    ───────────────────────────────────────────── */
+
+/* Outer wrapper */
 .mcc-root {
-  position: relative;
   width: 100%;
   overflow: hidden;
   touch-action: pan-y;
@@ -1185,47 +1186,23 @@
   background: #FAF6F2;
 }
 
-.mcc-bg {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  transition: background 0.5s ease;
-}
-
-.mcc-stage {
-  position: relative;
-  z-index: 1;
-  overflow: hidden;
-}
-
-/* Base slide */
-.mcc-slide {
-  position: absolute;
-  inset: 0;
+/* Horizontal flex track — all slides live here */
+.mcc-track {
+  display: flex;
   width: 100%;
+  transition: transform 0.42s cubic-bezier(0.32, 0.72, 0, 1);
+  will-change: transform;
 }
 
-/* Active slide — starts at var(--tx-from), transitions to 0 */
-.mcc-slide--enter {
-  transform: translateX(var(--tx-from, 0));
-}
-.mcc-slide--active {
-  transform: translateX(0) !important;
-  transition: transform 0.4s cubic-bezier(0.32,0.72,0,1);
+/* Each slide occupies exactly 100% of the container width */
+.mcc-slide {
+  flex: 0 0 100%;
+  width: 100%;
+  min-width: 100%;
 }
 
-/* Exiting slide */
-.mcc-slide--exit {
-  transform: translateX(var(--tx, 0)) scale(var(--scale, 1));
-  opacity: 0;
-  transition: transform 0.4s cubic-bezier(0.32,0.72,0,1),
-              opacity   0.3s ease;
-  pointer-events: none;
-}
-
-/* Card content */
-.mcc-content {
+/* Card button fills the slide */
+.mcc-card {
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -1235,48 +1212,53 @@
   text-align: left;
   cursor: pointer;
 }
+.mcc-card:active { opacity: 0.92; }
 
-/* Image */
-.mcc-img-wrap {
-  position: relative;
+/* Image area */
+.mcc-img {
   width: 100%;
   aspect-ratio: 3 / 2;
   overflow: hidden;
+  position: relative;
 }
-.mcc-img-wrap img {
+.mcc-img img {
   width: 100%;
   height: 100%;
   display: block;
 }
-.mcc-img-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to bottom, transparent 55%, rgba(250,246,242,0.9) 100%);
-  pointer-events: none;
-}
 
-/* Info block */
-.mcc-info {
+/* Text body */
+.mcc-body {
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
-  padding: 1rem 1.25rem 1.5rem;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem 0.75rem;
+}
+
+.mcc-num {
+  display: block;
+  font-family: 'Jost', sans-serif;
+  font-size: 0.46rem;
+  letter-spacing: 0.3em;
+  color: #C8A882;
+  margin-bottom: 0.2rem;
 }
 .mcc-sub {
   display: block;
   font-family: 'Jost', sans-serif;
   font-size: 0.48rem;
-  letter-spacing: 0.3em;
+  letter-spacing: 0.28em;
   text-transform: uppercase;
   color: #A89898;
   margin-bottom: 0.3rem;
 }
 .mcc-title {
   font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(1.6rem, 6vw, 2.4rem);
+  font-size: clamp(1.5rem, 6vw, 2.2rem);
   font-weight: 300;
   color: #3A2E2E;
-  line-height: 1.05;
+  line-height: 1.1;
   margin: 0 0 0.35rem;
 }
 .mcc-desc {
@@ -1286,33 +1268,31 @@
   margin: 0;
 }
 .mcc-cta {
+  display: inline-block;
   font-family: 'Jost', sans-serif;
-  font-size: 0.52rem;
+  font-size: 0.5rem;
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: #8C5B6B;
-  border-bottom: 1px solid currentColor;
+  border-bottom: 1px solid #8C5B6B;
   padding-bottom: 0.1rem;
-  display: inline-block;
   align-self: flex-start;
 }
 
 /* Bottom bar */
 .mcc-bar {
-  position: relative;
-  z-index: 2;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
-  padding: 0.75rem 1.25rem 1.25rem;
-  border-top: 1px solid rgba(58,46,46,0.06);
+  padding: 0.6rem 1.25rem 1rem;
+  border-top: 1px solid rgba(58,46,46,0.07);
 }
+
 .mcc-arrow {
   background: none;
-  border: 1px solid rgba(58,46,46,0.14);
-  width: 40px;
-  height: 40px;
+  border: 1px solid rgba(58,46,46,0.15);
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
   font-size: 1rem;
   color: #3A2E2E;
@@ -1320,44 +1300,19 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  transition: background 0.2s, border-color 0.2s;
+  transition: background 0.2s, color 0.2s;
 }
 .mcc-arrow:active { background: #3A2E2E; color: #FAF6F2; }
 
-.mcc-progress-wrap {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.4rem;
-}
-.mcc-num {
-  display: flex;
-  align-items: baseline;
-  gap: 0.25rem;
-}
-.mcc-num-big {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.5rem;
-  font-weight: 300;
-  color: #3A2E2E;
-  line-height: 1;
-}
-.mcc-num-total {
-  font-family: 'Jost', sans-serif;
-  font-size: 0.5rem;
-  color: #A89898;
-  letter-spacing: 0.1em;
-}
-.mcc-track {
+.mcc-pips {
   display: flex;
   gap: 5px;
   align-items: center;
 }
 .mcc-pip {
-  width: 16px;
-  height: 1.5px;
-  background: rgba(58,46,46,0.15);
+  width: 18px;
+  height: 2px;
+  background: rgba(58,46,46,0.12);
   border: none;
   padding: 0;
   cursor: pointer;
@@ -1366,5 +1321,9 @@
 }
 .mcc-pip--on {
   background: #8C5B6B;
-  width: 28px;
+  width: 30px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mcc-track { transition: none; }
 }
