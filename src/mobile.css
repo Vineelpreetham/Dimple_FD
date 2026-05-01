@@ -941,3 +941,180 @@
   font-style: italic;
 }
 
+
+/* ─────────────────────────────────────────────
+   MOBILE SWIPE GALLERY (msg-*)
+   ───────────────────────────────────────────── */
+.msg-root {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  overflow: hidden;
+  touch-action: pan-y;
+  user-select: none;
+}
+
+/* Full-screen media */
+.msg-media {
+  position: absolute;
+  inset: 0;
+}
+.msg-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  background: #111;
+  transition: opacity 0.35s ease;
+  will-change: opacity;
+}
+.msg-video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  background: #111;
+}
+
+/* Gradient overlays so header/dots are readable */
+.msg-top-grad {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 120px;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, transparent 100%);
+  pointer-events: none;
+}
+.msg-bot-grad {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 160px;
+  background: linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 100%);
+  pointer-events: none;
+}
+
+/* Header */
+.msg-header {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  padding-top: calc(0.75rem + env(safe-area-inset-top, 0px));
+}
+.msg-back {
+  flex-shrink: 0;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  color: #fff;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: background 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.msg-back:active { background: rgba(255,255,255,0.25); }
+
+.msg-title-wrap {
+  flex: 1;
+  text-align: center;
+}
+.msg-label {
+  display: block;
+  font-family: 'Jost', sans-serif;
+  font-size: 0.46rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.6);
+  margin-bottom: 0.15rem;
+}
+.msg-title {
+  display: block;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  font-weight: 400;
+  color: #fff;
+  letter-spacing: 0.05em;
+}
+
+.msg-counter {
+  flex-shrink: 0;
+  font-family: 'Jost', sans-serif;
+  font-size: 0.5rem;
+  letter-spacing: 0.2em;
+  color: rgba(255,255,255,0.55);
+  min-width: 40px;
+  text-align: right;
+}
+
+/* Dot indicators */
+.msg-dots {
+  position: absolute;
+  bottom: calc(1.25rem + env(safe-area-inset-bottom, 0px));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+  max-width: 80vw;
+}
+.msg-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.28);
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.3s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.msg-dot--on {
+  background: #fff;
+  transform: scale(1.35);
+}
+
+/* Invisible tap zones left / right */
+.msg-zone {
+  position: absolute;
+  top: 15%;
+  bottom: 15%;
+  z-index: 9;
+  background: none;
+  border: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.msg-zone--left  { left: 0; width: 30%; }
+.msg-zone--right { right: 0; width: 30%; }
+
+/* Swipe hint */
+.msg-hint {
+  position: absolute;
+  bottom: calc(3.2rem + env(safe-area-inset-bottom, 0px));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  font-family: 'Jost', sans-serif;
+  font-size: 0.44rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.35);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .msg-img { transition: none; }
+}
