@@ -1307,3 +1307,666 @@ textarea.form-input { min-height: 120px; }
     font-size: 11px;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   MOBILE PORTFOLIO — All styles scoped under .mobile-portfolio
+   Desktop styles above are UNTOUCHED.
+   ═══════════════════════════════════════════════════════════════ */
+
+.mobile-portfolio {
+  font-family: 'Cormorant Garamond', serif;
+  color: #3A2E2E;
+  background: #FAF6F2;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.mobile-page {
+  min-height: 100vh;
+  padding-top: 64px;
+}
+
+/* ── MOBILE NAV ── */
+.mobile-nav-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.25rem;
+  height: 64px;
+  transition: background 0.4s ease, box-shadow 0.4s ease;
+}
+
+.mobile-nav-brand {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #8C5B6B;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.mobile-hamburger {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 5px;
+  width: 36px;
+  height: 36px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  z-index: 1100;
+}
+
+.ham-line {
+  display: block;
+  height: 1.5px;
+  background: #8C5B6B;
+  border-radius: 2px;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  transform-origin: right center;
+}
+
+.ham-line:nth-child(1) { width: 22px; }
+.ham-line:nth-child(2) { width: 16px; }
+.ham-line:nth-child(3) { width: 22px; }
+
+.mobile-hamburger.open .ham-line:nth-child(1) {
+  width: 22px;
+  transform: rotate(-45deg);
+}
+.mobile-hamburger.open .ham-line:nth-child(2) {
+  opacity: 0;
+  width: 0;
+}
+.mobile-hamburger.open .ham-line:nth-child(3) {
+  width: 22px;
+  transform: rotate(45deg);
+}
+
+.mobile-menu-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  background: rgba(250, 246, 242, 0.97);
+  backdrop-filter: blur(20px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 2rem 2.5rem;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(-8px);
+  transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.mobile-menu-overlay.is-open {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: all;
+}
+
+.mobile-menu-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 3rem;
+}
+
+.mobile-menu-link {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 3.2rem;
+  font-weight: 300;
+  color: #3A2E2E;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.3rem 0;
+  text-align: left;
+  opacity: 0;
+  transform: translateY(16px);
+  transition: color 0.25s ease, opacity 0.4s ease, transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.mobile-menu-overlay.is-open .mobile-menu-link {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.mobile-menu-link.active { color: #C0758D; }
+
+.mobile-menu-link-num {
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  color: #A89898;
+  font-family: 'Jost', sans-serif;
+}
+
+.mobile-menu-footer {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-size: 0.72rem;
+  color: #A89898;
+  letter-spacing: 0.05em;
+}
+
+.mobile-menu-footer a { color: #A89898; text-decoration: none; }
+
+/* ── MOBILE HERO ── */
+.mobile-hero {
+  position: relative;
+  width: 100%;
+  height: 100svh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: pan-y;
+}
+
+.mobile-hero-glow {
+  position: absolute;
+  top: -15%;
+  left: -15%;
+  width: 65%;
+  height: 55%;
+  filter: blur(40px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.mobile-hero-title-wrap {
+  position: absolute;
+  top: 36%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 2;
+  white-space: nowrap;
+}
+
+.mobile-hero-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(4.5rem, 22vw, 9rem);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.mobile-hero-carousel {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  overflow: hidden;
+}
+
+.mobile-hero-model {
+  position: absolute;
+  bottom: 0;
+  cursor: pointer;
+  touch-action: none;
+  transform-origin: bottom center;
+}
+
+.mobile-hero-dots {
+  position: absolute;
+  bottom: 2.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.mobile-hero-dot {
+  border: none;
+  background: rgba(0,0,0,0.15);
+  border-radius: 99px;
+  width: 8px;
+  height: 8px;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.4s ease;
+}
+
+.mobile-hero-dot.active {
+  width: 24px;
+  background: rgba(0,0,0,0.35);
+}
+
+.mobile-hero-hint {
+  position: absolute;
+  bottom: 0.75rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  font-size: 0.5rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: rgba(58,46,46,0.35);
+  white-space: nowrap;
+}
+
+/* ── MOBILE MOODBOARD ── */
+.mobile-moodboard {
+  padding: 3rem 1.25rem;
+}
+
+.mobile-moodboard-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  margin-top: 1.5rem;
+  mix-blend-mode: multiply;
+}
+
+/* ── SHARED SECTION STYLES ── */
+.mobile-portfolio .mobile-section-header {
+  padding: 2.5rem 1.25rem 1.5rem;
+}
+
+.mobile-portfolio .mobile-section-label {
+  font-size: 0.55rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: #A89898;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.mobile-portfolio .mobile-section-label::before {
+  content: '';
+  display: block;
+  width: 1.2rem;
+  height: 1px;
+  background: #A89898;
+  flex-shrink: 0;
+}
+
+.mobile-portfolio .mobile-section-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.8rem, 7vw, 2.8rem);
+  font-weight: 300;
+  line-height: 1.1;
+  color: #3A2E2E;
+}
+
+/* ── MOBILE HOME COLLECTIONS ── */
+.mobile-home-collections { padding: 0 0 3rem; }
+
+.mobile-all-collections-link {
+  font-size: 0.55rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #6B5D5D;
+  background: none;
+  border: none;
+  border-bottom: 1px solid #6B5D5D;
+  padding-bottom: 0.15rem;
+  cursor: pointer;
+  margin-top: 0.75rem;
+  display: inline-block;
+  transition: opacity 0.25s;
+}
+.mobile-all-collections-link:hover { opacity: 0.6; }
+
+/* ── MOBILE COLLECTIONS LIST ── */
+.mobile-collections { padding: 0 0 2rem; }
+
+.mobile-collection-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.mobile-collection-card {
+  display: flex;
+  flex-direction: column;
+  background: none;
+  border: none;
+  border-bottom: 1px solid rgba(58,46,46,0.08);
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  animation: mobileFadeUp 0.5s ease both;
+}
+
+@keyframes mobileFadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.mobile-collection-img-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  overflow: hidden;
+}
+
+.mobile-collection-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.mobile-collection-card:active .mobile-collection-img-wrap img { transform: scale(1.03); }
+
+.mobile-collection-accent { position: absolute; inset: 0; pointer-events: none; }
+
+.mobile-collection-info {
+  padding: 1rem 1.25rem 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1rem;
+}
+
+.mobile-collection-sub {
+  font-size: 0.52rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: #A89898;
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.mobile-collection-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.4rem;
+  font-weight: 400;
+  color: #3A2E2E;
+  margin-bottom: 0.3rem;
+}
+
+.mobile-collection-desc {
+  font-size: 0.72rem;
+  color: #6B5D5D;
+  line-height: 1.7;
+  max-width: 260px;
+}
+
+.mobile-collection-cta {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.55rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #A89898;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+/* ── MOBILE INSTAGRAM ── */
+.mobile-instagram {
+  padding: 3rem 1.25rem;
+  background: linear-gradient(135deg, #F0D6DE 0%, #D6E8F4 50%, #FAF6F2 100%);
+  text-align: center;
+}
+
+.mobile-ig-intro {
+  font-size: 0.75rem;
+  color: #6B5D5D;
+  margin-top: 0.75rem;
+  line-height: 1.8;
+}
+
+.mobile-ig-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  margin: 1.5rem 0;
+}
+
+.mobile-ig-post {
+  aspect-ratio: 1;
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+  display: block;
+}
+
+.mobile-ig-post img { width: 100%; height: 100%; object-fit: cover; }
+
+.mobile-ig-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(58,46,46,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.mobile-ig-post:active .mobile-ig-overlay { opacity: 1; }
+.mobile-ig-overlay span {
+  color: white;
+  font-size: 0.55rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.mobile-ig-cta {
+  display: inline-block;
+  font-size: 0.6rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: #3A2E2E;
+  text-decoration: none;
+  border-bottom: 1px solid #3A2E2E;
+  padding-bottom: 0.25rem;
+  transition: opacity 0.25s;
+}
+.mobile-ig-cta:hover { opacity: 0.55; }
+
+/* ── MOBILE ABOUT ── */
+.mobile-about { padding: 1.5rem 0 3rem; }
+
+.mobile-about-img-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3/4;
+  overflow: hidden;
+}
+
+.mobile-about-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(0.9);
+}
+
+.mobile-about-caption {
+  position: absolute;
+  bottom: 1rem;
+  left: 1.25rem;
+  font-size: 0.55rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.8);
+  background: rgba(58,46,46,0.35);
+  backdrop-filter: blur(8px);
+  padding: 0.3rem 0.7rem;
+  border-radius: 2px;
+}
+
+.mobile-about-text { padding: 2rem 1.25rem; }
+
+.mobile-about-heading {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.6rem, 6.5vw, 2.4rem);
+  font-weight: 300;
+  line-height: 1.3;
+  color: #3A2E2E;
+  margin: 0.75rem 0 1.5rem;
+}
+
+.mobile-about-heading em { font-style: italic; color: #C0758D; }
+
+.mobile-about-divider {
+  width: 2.5rem;
+  height: 1px;
+  background: #C8A882;
+  margin-bottom: 1.5rem;
+}
+
+.mobile-about-body { display: flex; flex-direction: column; gap: 1rem; }
+
+.mobile-about-body p {
+  font-size: 0.85rem;
+  color: #6B5D5D;
+  line-height: 1.9;
+}
+
+.mobile-about-signature {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.6rem;
+  font-style: italic;
+  color: #8C5B6B;
+  margin-top: 2rem;
+}
+
+/* ── MOBILE CONTACT ── */
+.mobile-contact {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  padding: 2rem 0;
+}
+
+.mobile-contact-bg-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(3rem, 18vw, 8rem);
+  font-weight: 300;
+  white-space: nowrap;
+  color: rgba(58,46,46,0.04);
+  pointer-events: none;
+  user-select: none;
+}
+
+.mobile-contact-content { position: relative; z-index: 1; padding: 2rem 1.25rem; width: 100%; }
+
+.mobile-contact-heading {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(3rem, 14vw, 6rem);
+  font-weight: 300;
+  color: #3A2E2E;
+  line-height: 1;
+  margin: 0.5rem 0 0.75rem;
+}
+
+.mobile-contact-sub { font-size: 0.8rem; color: #6B5D5D; line-height: 1.7; margin-bottom: 2.5rem; }
+
+.mobile-contact-links { display: flex; flex-direction: column; }
+
+.mobile-contact-link {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.1rem 0;
+  border-bottom: 1px solid rgba(58,46,46,0.1);
+  text-decoration: none;
+  color: #3A2E2E;
+  font-size: 0.88rem;
+  transition: color 0.25s;
+}
+.mobile-contact-link:first-child { border-top: 1px solid rgba(58,46,46,0.1); }
+.mobile-contact-link:active { color: #C0758D; }
+.mobile-contact-link-icon { color: #C8A882; display: flex; align-items: center; flex-shrink: 0; }
+
+.mobile-contact-availability {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 2rem;
+  font-size: 0.65rem;
+  color: #A89898;
+}
+
+.mobile-contact-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #88c88a;
+  flex-shrink: 0;
+  animation: mPulse 2s ease infinite;
+}
+
+@keyframes mPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.6; transform: scale(0.85); }
+}
+
+/* ── MOBILE FOOTER ── */
+.mobile-footer {
+  background: #3A2E2E;
+  padding: 2.5rem 1.25rem 2rem;
+  color: #FAF6F2;
+}
+
+.mobile-footer-brand p {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.6rem;
+  font-weight: 300;
+  line-height: 1.1;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 1.5rem;
+}
+
+.mobile-footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  margin-bottom: 2rem;
+  border-top: 1px solid rgba(250,246,242,0.08);
+  border-bottom: 1px solid rgba(250,246,242,0.08);
+  padding: 1rem 0;
+}
+
+.mobile-footer-link {
+  background: none;
+  border: none;
+  font-size: 0.6rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: #A89898;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.25s;
+}
+.mobile-footer-link:hover { color: #FAF6F2; }
+
+.mobile-footer-bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.65rem;
+  color: rgba(168,152,152,0.6);
+}
