@@ -1,59 +1,39 @@
 import React from 'react';
-import { Mail, Instagram, Linkedin } from 'lucide-react';
 
-const MobileContact = () => {
+const LINKS = [
+  { href: 'mailto:dimpleshivukumar@gmail.com', icon: '✉', label: 'dimpleshivukumar@gmail.com', ext: false },
+  { href: 'https://www.instagram.com/sketchstorybydimple', icon: '◉', label: '@sketchstorybydimple', ext: true },
+  { href: 'https://www.linkedin.com/in/dimple-shivakumar', icon: 'in', label: 'LinkedIn', ext: true },
+];
+
+export default function MobileContact() {
   return (
-    <div className="mobile-contact">
-      <div className="mobile-contact-bg-text" aria-hidden="true">Let's connect!</div>
+    <div className="mco-wrap">
+      <div className="mco-inner">
+        <span className="mco-label">Get in touch</span>
+        <h1 className="mco-heading">Inquiries.</h1>
+        <p className="mco-sub">Design grows through connection — let's connect</p>
 
-      <div className="mobile-contact-content">
-        <span className="mobile-section-label">Get in touch</span>
-        <h1 className="mobile-contact-heading">Inquiries.</h1>
-        <p className="mobile-contact-sub">Design grows through connection — let's connect</p>
-
-        <div className="mobile-contact-links">
-          <a
-            href="mailto:dimpleshivukumar@gmail.com"
-            className="mobile-contact-link"
-          >
-            <span className="mobile-contact-link-icon">
-              <Mail size={18} strokeWidth={1.5} />
-            </span>
-            <span>dimpleshivukumar@gmail.com</span>
-          </a>
-
-          <a
-            href="https://www.instagram.com/sketchstorybydimple"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mobile-contact-link"
-          >
-            <span className="mobile-contact-link-icon">
-              <Instagram size={18} strokeWidth={1.5} />
-            </span>
-            <span>@sketchstorybydimple</span>
-          </a>
-
-          <a
-            href="https://www.linkedin.com/in/dimple-shivakumar"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mobile-contact-link"
-          >
-            <span className="mobile-contact-link-icon">
-              <Linkedin size={18} strokeWidth={1.5} />
-            </span>
-            <span>LinkedIn</span>
-          </a>
+        <div className="mco-links">
+          {LINKS.map(({ href, icon, label, ext }) => (
+            <a
+              key={href}
+              href={href}
+              className="mco-link"
+              {...(ext ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+            >
+              <span className="mco-link-icon">{icon}</span>
+              <span>{label}</span>
+              <span className="mco-link-arrow">↗</span>
+            </a>
+          ))}
         </div>
 
-        <div className="mobile-contact-availability">
-          <div className="mobile-contact-dot" />
-          <span>Available for collaborations & freelance projects</span>
+        <div className="mco-avail">
+          <span className="mco-dot" />
+          Available for collaborations &amp; freelance
         </div>
       </div>
     </div>
   );
-};
-
-export default MobileContact;
+}

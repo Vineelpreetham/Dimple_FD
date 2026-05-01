@@ -1,239 +1,220 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import MobileNav from './MobileNav';
-import MobileHero from './MobileHero';
+import React, { useState, useCallback, Suspense, lazy } from 'react';
+import '../../mobile.css';
+
+// Core mobile views loaded eagerly (tiny files, needed immediately)
+import MobileNav         from './MobileNav';
+import MobileHero        from './MobileHero';
 import MobileCollections from './MobileCollections';
-import MobileAbout from './MobileAbout';
-import MobileContact from './MobileContact';
-import MobileFooter from './MobileFooter';
+import MobileAbout       from './MobileAbout';
+import MobileContact     from './MobileContact';
+import MobileFooter      from './MobileFooter';
 
-// Re-use the existing sub-page components unchanged
-import TechFlatPage from '../TechFlatPage';
-import BrandProjectsPage from '../BrandProjectsPage';
-import OrganicStructuresPage from '../OrganicStructuresPage';
-import DesignProjectsPage from '../DesignProjectsPage';
-import Brand1Page from '../Brand1Page';
-import Brand2Page from '../Brand2Page';
-import Brand3Page from '../Brand3Page';
-import Brand4Page from '../Brand4Page';
-import Brand5Page from '../Brand5Page';
-import Brand6Page from '../Brand6Page';
-import Brand7Page from '../Brand7Page';
-import Design1Page from '../Design1Page';
-import Design2Page from '../Design2Page';
-import Design3Page from '../Design3Page';
-import Design4Page from '../Design4Page';
-import Design5Page from '../Design5Page';
-import Design6Page from '../Design6Page';
-import Design7Page from '../Design7Page';
-import Design8Page from '../Design8Page';
-import Design9Page from '../Design9Page';
-import { BackgroundGradientAnimation } from '../ui/background-gradient-animation';
-import { getOptimizedUrl } from '../../lib/imageConfig';
+// Heavy desktop sub-pages — loaded only when navigated to
+const TechFlatPage          = lazy(() => import('../TechFlatPage'));
+const BrandProjectsPage     = lazy(() => import('../BrandProjectsPage'));
+const OrganicStructuresPage = lazy(() => import('../OrganicStructuresPage'));
+const DesignProjectsPage    = lazy(() => import('../DesignProjectsPage'));
+const Brand1Page  = lazy(() => import('../Brand1Page'));
+const Brand2Page  = lazy(() => import('../Brand2Page'));
+const Brand3Page  = lazy(() => import('../Brand3Page'));
+const Brand4Page  = lazy(() => import('../Brand4Page'));
+const Brand5Page  = lazy(() => import('../Brand5Page'));
+const Brand6Page  = lazy(() => import('../Brand6Page'));
+const Brand7Page  = lazy(() => import('../Brand7Page'));
+const Design1Page = lazy(() => import('../Design1Page'));
+const Design2Page = lazy(() => import('../Design2Page'));
+const Design3Page = lazy(() => import('../Design3Page'));
+const Design4Page = lazy(() => import('../Design4Page'));
+const Design5Page = lazy(() => import('../Design5Page'));
+const Design6Page = lazy(() => import('../Design6Page'));
+const Design7Page = lazy(() => import('../Design7Page'));
+const Design8Page = lazy(() => import('../Design8Page'));
+const Design9Page = lazy(() => import('../Design9Page'));
 
-/** Top-level pages that show the nav + footer */
-const MAIN_PAGES = ['home', 'about', 'collections', 'contact'];
+// Background gradient — lazy because it imports CSS-in-JS
+const BGA = lazy(() =>
+  import('../ui/background-gradient-animation').then(m => ({
+    default: m.BackgroundGradientAnimation,
+  }))
+);
 
-const MobilePortfolio = () => {
-  const [activePage, setActivePage] = useState('home');
+const MOODBOARD_URL =
+  'https://ik.imagekit.io/Nouskun/Dimple/WhatsApp%20Image%202026-04-09%20at%2010.42.25%20PM.jpeg?tr=f-auto,q-70,w-900';
 
-  const showPage = useCallback((pageName) => {
-    setActivePage(pageName);
-    window.scrollTo(0, 0);
-    if (window.lenis) window.lenis.scrollTo(0, { immediate: true });
+const IG_POSTS = [
+  'https://www.instagram.com/p/DV843M-jQRh/',
+  'https://www.instagram.com/reel/DVjUNI9jn07/',
+  'https://www.instagram.com/p/DS33UkdE_X8/',
+  'https://www.instagram.com/p/DJrkQ86O5dV/',
+];
+
+// Spinner shown while a lazy chunk loads
+const Loader = () => (
+  <div className="mp-loader">
+    <div className="mp-spinner" />
+  </div>
+);
+
+// Catches render errors so we never see a blank white screen
+class Boundary extends React.Component {
+  state = { err: null };
+  static getDerivedStateFromError(e) { return { err: e }; }
+  render() {
+    if (this.state.err) {
+      return (
+        <div className="mp-error">
+          <p>Something went wrong</p>
+          <small>{this.state.err?.message}</small>
+          <button onClick={() => this.setState({ err: null })}>Retry</button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+const MAIN = ['home', 'about', 'collections', 'contact'];
+
+export default function MobilePortfolio() {
+  const [page, setPage] = useState('home');
+
+  const go = useCallback((p) => {
+    setPage(p);
+    window.scrollTo({ top: 0, behavior: 'instant' });
   }, []);
 
-  // Scroll to top on every page change
-  useEffect(() => {
-    window.scrollTo(0, 0);
-    if (window.lenis) window.lenis.scrollTo(0, { immediate: true });
-  }, [activePage]);
-
-  const isMainPage = MAIN_PAGES.includes(activePage);
+  const isMain = MAIN.includes(page);
 
   return (
-    <div className="mobile-portfolio">
-      {/* Nav is always visible on main pages */}
-      {isMainPage && <MobileNav activePage={activePage} showPage={showPage} />}
+    <div className="mp-root">
+      {isMain && <MobileNav activePage={page} showPage={go} />}
 
-      {/* ── HOME ── */}
-      {activePage === 'home' && (
-        <div className="mobile-page">
-          <MobileHero />
+      <Boundary>
+        <Suspense fallback={<Loader />}>
 
-          {/* Moodboard strip */}
-          <section className="mobile-moodboard">
-            <span className="mobile-section-label" style={{ justifyContent: 'center', display: 'flex' }}>Portfolio</span>
-            <img
-              src={getOptimizedUrl('https://ik.imagekit.io/Nouskun/Dimple/WhatsApp%20Image%202026-04-09%20at%2010.42.25%20PM.jpeg?updatedAt=1777054038407')}
-              alt="Creative Moodboard"
-              className="mobile-moodboard-img"
-              loading="lazy"
-            />
-          </section>
+          {/* ─── HOME ─── */}
+          {page === 'home' && (
+            <div className="mp-page">
+              <MobileHero />
 
-          {/* Collections teaser */}
-          <section className="mobile-home-collections">
-            <div className="mobile-section-header" style={{ textAlign: 'center' }}>
-              <span className="mobile-section-label" style={{ justifyContent: 'center', display: 'flex' }}>Selected Work</span>
-              <h2 className="mobile-section-title">Curated Fragments</h2>
-              <button
-                className="mobile-all-collections-link"
-                onClick={() => showPage('collections')}
-              >
-                All Collections →
-              </button>
-            </div>
-            <MobileCollections onSelectPage={showPage} />
-          </section>
+              {/* Moodboard */}
+              <section className="mp-moodboard">
+                <span className="mp-label">Portfolio</span>
+                <img src={MOODBOARD_URL} alt="Moodboard" className="mp-moodboard-img" loading="lazy" />
+              </section>
 
-          {/* Instagram */}
-          <section className="mobile-instagram">
-            <div className="mobile-section-header" style={{ textAlign: 'center' }}>
-              <span className="mobile-section-label" style={{ justifyContent: 'center', display: 'flex' }}>Follow Along</span>
-              <h2 className="mobile-section-title">@sketchstorybydimple</h2>
-              <p className="mobile-ig-intro">Behind the seams — sketches, fittings, and moments from the atelier.</p>
-            </div>
-            <div className="mobile-ig-grid">
-              {[
-                'https://www.instagram.com/p/DV843M-jQRh/',
-                'https://www.instagram.com/reel/DVjUNI9jn07/',
-                'https://www.instagram.com/p/DS33UkdE_X8/',
-                'https://www.instagram.com/p/DJrkQ86O5dV/',
-              ].map((url, i) => (
-                <a key={i} href={url} target="_blank" rel="noopener noreferrer" className="mobile-ig-post">
-                  <img src={`/assets/instagram_${i + 1}.jpg`} alt={`Instagram Post ${i + 1}`} loading="lazy" />
-                  <div className="mobile-ig-overlay"><span>View</span></div>
+              {/* Collections teaser */}
+              <section className="mp-section">
+                <div className="mp-section-head">
+                  <span className="mp-label">Selected Work</span>
+                  <h2 className="mp-h2">Curated Fragments</h2>
+                  <button className="mp-text-btn" onClick={() => go('collections')}>
+                    All Collections →
+                  </button>
+                </div>
+                <MobileCollections onSelectPage={go} />
+              </section>
+
+              {/* Instagram */}
+              <section className="mp-ig">
+                <div className="mp-ig-head">
+                  <span className="mp-label">Follow Along</span>
+                  <h2 className="mp-h2">@sketchstorybydimple</h2>
+                  <p className="mp-ig-sub">
+                    Behind the seams — sketches, fittings, and moments from the atelier.
+                  </p>
+                </div>
+                <div className="mp-ig-grid">
+                  {IG_POSTS.map((url, i) => (
+                    <a key={i} href={url} target="_blank" rel="noopener noreferrer" className="mp-ig-cell">
+                      <img src={`/assets/instagram_${i + 1}.jpg`} alt={`Post ${i + 1}`} loading="lazy" />
+                      <div className="mp-ig-over">View</div>
+                    </a>
+                  ))}
+                </div>
+                <a
+                  href="https://www.instagram.com/sketchstorybydimple"
+                  target="_blank" rel="noopener noreferrer"
+                  className="mp-outline-btn"
+                >
+                  Follow on Instagram
                 </a>
-              ))}
+              </section>
+
+              <MobileFooter showPage={go} />
             </div>
-            <a
-              href="https://www.instagram.com/sketchstorybydimple?igsh=ZmIxMXFqZDFtZDdr"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mobile-ig-cta"
-            >
-              Follow on Instagram
-            </a>
-          </section>
+          )}
 
-          <MobileFooter showPage={showPage} />
-        </div>
-      )}
+          {/* ─── ABOUT ─── */}
+          {page === 'about' && (
+            <div className="mp-page mp-page--nav">
+              <MobileAbout />
+              <MobileFooter showPage={go} />
+            </div>
+          )}
 
-      {/* ── ABOUT ── */}
-      {activePage === 'about' && (
-        <div className="mobile-page">
-          <MobileAbout />
-          <MobileFooter showPage={showPage} />
-        </div>
-      )}
+          {/* ─── COLLECTIONS ─── */}
+          {page === 'collections' && (
+            <div className="mp-page mp-page--nav">
+              <div className="mp-section-head mp-section-head--center">
+                <span className="mp-label">All Collections</span>
+                <h2 className="mp-h2">Artistic Fashion Collections</h2>
+              </div>
+              <MobileCollections onSelectPage={go} />
+              <MobileFooter showPage={go} />
+            </div>
+          )}
 
-      {/* ── COLLECTIONS ── */}
-      {activePage === 'collections' && (
-        <div className="mobile-page">
-          <BackgroundGradientAnimation
-            containerClassName="!fixed inset-0 !z-[-1] !h-screen !w-screen"
-            gradientBackgroundStart="#F8F9FF"
-            gradientBackgroundEnd="#F0F0FF"
-            firstColor="180, 165, 230"
-            secondColor="237, 220, 143"
-            thirdColor="206, 135, 159"
-            fourthColor="167, 187, 211"
-            fifthColor="245, 180, 160"
-            pointerColor="206, 135, 159"
-            size="80%"
-            blendingValue="hard-light"
-          />
-          <div className="relative z-10 pt-20 pb-12">
-            <MobileCollections onSelectPage={showPage} />
-          </div>
-          <MobileFooter showPage={showPage} />
-        </div>
-      )}
+          {/* ─── CONTACT ─── */}
+          {page === 'contact' && (
+            <div className="mp-page mp-page--nav">
+              <MobileContact />
+              <MobileFooter showPage={go} />
+            </div>
+          )}
 
-      {/* ── CONTACT ── */}
-      {activePage === 'contact' && (
-        <div className="mobile-page">
-          <MobileContact />
-          <MobileFooter showPage={showPage} />
-        </div>
-      )}
+          {/* ─── TECH FLAT ─── */}
+          {page === 'tech_flat' && (
+            <div className="mp-page mp-subpage">
+              <TechFlatPage onBack={() => go('collections')} />
+            </div>
+          )}
 
-      {/* ── TECH FLAT ── */}
-      {activePage === 'tech_flat' && (
-        <div className="mobile-page relative">
-          <BackgroundGradientAnimation
-            containerClassName="!fixed inset-0 !z-[-1] !h-screen !w-screen"
-            gradientBackgroundStart="#ffffff"
-            gradientBackgroundEnd="#ffffff"
-            firstColor="100, 149, 237"
-            secondColor="135, 206, 235"
-            thirdColor="70, 130, 180"
-            fourthColor="173, 216, 230"
-            fifthColor="0, 191, 255"
-            pointerColor="200, 200, 250"
-          />
-          <div className="relative z-10">
-            <TechFlatPage onBack={() => showPage('collections')} />
-          </div>
-        </div>
-      )}
+          {/* ─── BRAND PROJECTS ─── */}
+          {page === 'brand_projects' && (
+            <BrandProjectsPage onBack={() => go('collections')} onSelectProject={(id) => go(`brand_${id}`)} />
+          )}
+          {page === 'brand_1' && <Brand1Page onBack={() => go('brand_projects')} />}
+          {page === 'brand_2' && <Brand2Page onBack={() => go('brand_projects')} />}
+          {page === 'brand_3' && <Brand3Page onBack={() => go('brand_projects')} />}
+          {page === 'brand_4' && <Brand4Page onBack={() => go('brand_projects')} />}
+          {page === 'brand_5' && <Brand5Page onBack={() => go('brand_projects')} />}
+          {page === 'brand_6' && <Brand6Page onBack={() => go('brand_projects')} />}
+          {page === 'brand_7' && <Brand7Page onBack={() => go('brand_projects')} />}
 
-      {/* ── BRAND PROJECTS ── */}
-      {activePage === 'brand_projects' && (
-        <BrandProjectsPage
-          onBack={() => showPage('collections')}
-          onSelectProject={(id) => showPage(`brand_${id}`)}
-        />
-      )}
+          {/* ─── DESIGN PROJECTS ─── */}
+          {page === 'design_projects' && (
+            <DesignProjectsPage onBack={() => go('collections')} onSelectProject={(id) => go(`design_${id}`)} />
+          )}
+          {page === 'design_1' && <Design1Page onBack={() => go('design_projects')} />}
+          {page === 'design_2' && <Design2Page onBack={() => go('design_projects')} />}
+          {page === 'design_3' && <Design3Page onBack={() => go('design_projects')} />}
+          {page === 'design_4' && <Design4Page onBack={() => go('design_projects')} />}
+          {page === 'design_5' && <Design5Page onBack={() => go('design_projects')} />}
+          {page === 'design_6' && <Design6Page onBack={() => go('design_projects')} />}
+          {page === 'design_7' && <Design7Page onBack={() => go('design_projects')} />}
+          {page === 'design_8' && <Design8Page onBack={() => go('design_projects')} />}
+          {page === 'design_9' && <Design9Page onBack={() => go('design_projects')} />}
 
-      {/* ── BRAND SUB-PAGES ── */}
-      {activePage === 'brand_1' && <Brand1Page onBack={() => showPage('brand_projects')} />}
-      {activePage === 'brand_2' && <Brand2Page onBack={() => showPage('brand_projects')} />}
-      {activePage === 'brand_3' && <Brand3Page onBack={() => showPage('brand_projects')} />}
-      {activePage === 'brand_4' && <Brand4Page onBack={() => showPage('brand_projects')} />}
-      {activePage === 'brand_5' && <Brand5Page onBack={() => showPage('brand_projects')} />}
-      {activePage === 'brand_6' && <Brand6Page onBack={() => showPage('brand_projects')} />}
-      {activePage === 'brand_7' && <Brand7Page onBack={() => showPage('brand_projects')} />}
+          {/* ─── ORGANIC STRUCTURES ─── */}
+          {page === 'organic_structures' && (
+            <div className="mp-page mp-subpage">
+              <OrganicStructuresPage onBack={() => go('collections')} />
+            </div>
+          )}
 
-      {/* ── DESIGN PROJECTS ── */}
-      {activePage === 'design_projects' && (
-        <DesignProjectsPage
-          onBack={() => showPage('collections')}
-          onSelectProject={(id) => showPage(`design_${id}`)}
-        />
-      )}
-
-      {/* ── DESIGN SUB-PAGES ── */}
-      {activePage === 'design_1' && <Design1Page onBack={() => showPage('design_projects')} />}
-      {activePage === 'design_2' && <Design2Page onBack={() => showPage('design_projects')} />}
-      {activePage === 'design_3' && <Design3Page onBack={() => showPage('design_projects')} />}
-      {activePage === 'design_4' && <Design4Page onBack={() => showPage('design_projects')} />}
-      {activePage === 'design_5' && <Design5Page onBack={() => showPage('design_projects')} />}
-      {activePage === 'design_6' && <Design6Page onBack={() => showPage('design_projects')} />}
-      {activePage === 'design_7' && <Design7Page onBack={() => showPage('design_projects')} />}
-      {activePage === 'design_8' && <Design8Page onBack={() => showPage('design_projects')} />}
-      {activePage === 'design_9' && <Design9Page onBack={() => showPage('design_projects')} />}
-
-      {/* ── ORGANIC STRUCTURES ── */}
-      {activePage === 'organic_structures' && (
-        <div className="mobile-page relative">
-          <BackgroundGradientAnimation
-            containerClassName="!fixed inset-0 !z-[-1] !h-screen !w-screen"
-            gradientBackgroundStart="#F1DEE4"
-            gradientBackgroundEnd="#E2C2CA"
-            firstColor="174, 230, 229"
-            secondColor="184, 179, 232"
-            thirdColor="144, 180, 245"
-            fourthColor="98, 128, 230"
-            fifthColor="100, 220, 255"
-            pointerColor="200, 200, 250"
-          />
-          <OrganicStructuresPage onBack={() => showPage('collections')} />
-        </div>
-      )}
+        </Suspense>
+      </Boundary>
     </div>
   );
-};
-
-export default MobilePortfolio;
+}

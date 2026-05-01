@@ -1,28 +1,22 @@
 import React from 'react';
 
-const MobileFooter = ({ showPage }) => (
-  <footer className="mobile-footer">
-    <div className="mobile-footer-brand">
-      <p>Dimple<br />Shivakumar</p>
-    </div>
+const LINKS = ['home', 'about', 'collections', 'contact'];
 
-    <nav className="mobile-footer-links">
-      {['home', 'about', 'collections', 'contact'].map((page) => (
-        <button
-          key={page}
-          onClick={() => showPage(page)}
-          className="mobile-footer-link"
-        >
-          {page.charAt(0).toUpperCase() + page.slice(1)}
-        </button>
-      ))}
-    </nav>
-
-    <div className="mobile-footer-bottom">
-      <p>dimpleshivukumar@gmail.com</p>
-      <p>© {new Date().getFullYear()} Dimple Shivakumar. All rights reserved.</p>
-    </div>
-  </footer>
-);
-
-export default MobileFooter;
+export default function MobileFooter({ showPage }) {
+  return (
+    <footer className="mf-footer">
+      <div className="mf-brand">Dimple<br />Shivakumar</div>
+      <nav className="mf-nav">
+        {LINKS.map(p => (
+          <button key={p} className="mf-link" onClick={() => showPage(p)}>
+            {p.charAt(0).toUpperCase() + p.slice(1)}
+          </button>
+        ))}
+      </nav>
+      <div className="mf-bottom">
+        <p>dimpleshivukumar@gmail.com</p>
+        <p>© {new Date().getFullYear()} Dimple Shivakumar</p>
+      </div>
+    </footer>
+  );
+}

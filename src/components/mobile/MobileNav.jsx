@@ -1,86 +1,75 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
-const MobileNav = ({ activePage, showPage }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
+const NAV_LINKS = [
+  { label: 'Home',        page: 'home' },
+  { label: 'About',       page: 'about' },
+  { label: 'Collections', page: 'collections' },
+  { label: 'Contact',     page: 'contact' },
+];
 
+export default function MobileNav({ activePage, showPage }) {
+  const [open, setOpen]       = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const prevPage = useRef(activePage);
+
+  // Close on page change
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.pageYOffset > 40);
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  // Close menu when page changes
-  useEffect(() => {
-    setIsOpen(false);
+    if (prevPage.current !== activePage) {
+      setOpen(false);
+      prevPage.current = activePage;
+    }
   }, [activePage]);
 
-  // Prevent body scroll when menu is open
+  // Scroll detection
   useEffect(() => {
-    document.body.style.overflow = isOpen ? 'hidden' : '';
-    return () => { document.body.style.overflow = ''; };
-  }, [isOpen]);
+    const onScroll = () => setScrolled(window.scrollY > 40);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
-  const navLinks = [
-    { label: 'Home', page: 'home' },
-    { label: 'About', page: 'about' },
-    { label: 'Collections', page: 'collections' },
-    { label: 'Contact', page: 'contact' },
-  ];
+  // Lock body scroll when menu open
+  useEffect(() => {
+    document.body.style.overflow = open ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [open]);
 
   return (
     <>
-      {/* Top Bar */}
-      <header
-        className="mobile-nav-bar"
-        style={{
-          background: isScrolled ? 'rgba(255,255,255,0.85)' : 'transparent',
-          backdropFilter: isScrolled ? 'blur(16px)' : 'none',
-          boxShadow: isScrolled ? '0 1px 0 rgba(0,0,0,0.06)' : 'none',
-        }}
-      >
-        <button
-          className="mobile-nav-brand"
-          onClick={() => showPage('home')}
-          aria-label="Go to home"
-        >
+      {/* Top bar */}
+      <header className={`mn-bar${scrolled ? ' mn-bar--scrolled' : ''}`}>
+        <button className="mn-brand" onClick={() => showPage('home')}>
           Dimple Shivakumar
         </button>
-
         <button
-          className={`mobile-hamburger ${isOpen ? 'open' : ''}`}
-          onClick={() => setIsOpen(!isOpen)}
-          aria-label={isOpen ? 'Close menu' : 'Open menu'}
-          aria-expanded={isOpen}
+          className={`mn-burger${open ? ' mn-burger--open' : ''}`}
+          onClick={() => setOpen(o => !o)}
+          aria-label={open ? 'Close menu' : 'Open menu'}
+          aria-expanded={open}
         >
-          <span className="ham-line" />
-          <span className="ham-line" />
-          <span className="ham-line" />
+          <span /><span /><span />
         </button>
       </header>
 
-      {/* Full-Screen Overlay Menu */}
-      <div className={`mobile-menu-overlay ${isOpen ? 'is-open' : ''}`}>
-        <nav className="mobile-menu-links">
-          {navLinks.map((link, i) => (
+      {/* Full-screen overlay */}
+      <div className={`mn-overlay${open ? ' mn-overlay--open' : ''}`} aria-hidden={!open}>
+        <nav className="mn-links">
+          {NAV_LINKS.map(({ label, page }, i) => (
             <button
-              key={link.page}
-              className={`mobile-menu-link ${activePage === link.page ? 'active' : ''}`}
-              onClick={() => showPage(link.page)}
-              style={{ transitionDelay: isOpen ? `${i * 0.07 + 0.1}s` : '0s' }}
+              key={page}
+              className={`mn-link${activePage === page ? ' mn-link--active' : ''}`}
+              style={{ transitionDelay: open ? `${i * 60 + 80}ms` : '0ms' }}
+              onClick={() => { showPage(page); setOpen(false); }}
             >
-              <span className="mobile-menu-link-num">0{i + 1}</span>
-              {link.label}
+              <span className="mn-link-num">0{i + 1}</span>
+              {label}
             </button>
           ))}
         </nav>
-
-        <div className="mobile-menu-footer">
-          <p>dimpleshivukumar@gmail.com</p>
+        <div className="mn-overlay-footer">
+          <span>dimpleshivukumar@gmail.com</span>
           <a
             href="https://www.instagram.com/sketchstorybydimple"
-            target="_blank"
-            rel="noopener noreferrer"
+            target="_blank" rel="noopener noreferrer"
           >
             @sketchstorybydimple
           </a>
@@ -88,6 +77,4 @@ const MobileNav = ({ activePage, showPage }) => {
       </div>
     </>
   );
-};
-
-export default MobileNav;
+}
