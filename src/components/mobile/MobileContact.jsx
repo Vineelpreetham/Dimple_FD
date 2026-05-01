@@ -6,10 +6,13 @@ const LINKS = [
   { href: 'https://www.linkedin.com/in/dimple-shivakumar', icon: 'in', label: 'LinkedIn', ext: true },
 ];
 
-export default function MobileContact() {
+export default function MobileContact({ onBack }) {
   return (
     <div className="mco-wrap">
       <div className="mco-inner">
+        {onBack && (
+          <button className="mco-back" onClick={onBack}>← Back</button>
+        )}
         <span className="mco-label">Get in touch</span>
         <h1 className="mco-heading">Inquiries.</h1>
         <p className="mco-sub">Design grows through connection — let's connect</p>

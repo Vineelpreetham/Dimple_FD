@@ -8,9 +8,10 @@ import MobileCollections    from './MobileCollections';
 import MobileAbout          from './MobileAbout';
 import MobileContact        from './MobileContact';
 import MobileFooter         from './MobileFooter';
-import MobileBrandProjects  from './MobileBrandProjects';
-import MobileDesignProjects from './MobileDesignProjects';
-import MobileSwipeGallery   from './MobileSwipeGallery';
+import MobileBrandProjects   from './MobileBrandProjects';
+import MobileDesignProjects  from './MobileDesignProjects';
+import MobileSwipeGallery    from './MobileSwipeGallery';
+import MobileCuratedCarousel from './MobileCuratedCarousel';
 import { BRAND_GALLERIES, DESIGN_GALLERIES, ORGANIC_GALLERY } from './galleryData';
 
 // Desktop sub-pages used on mobile as-is
@@ -132,11 +133,8 @@ export default function MobilePortfolio() {
                 <div className="mp-section-head">
                   <span className="mp-label">Selected Work</span>
                   <h2 className="mp-h2">Curated Fragments</h2>
-                  <button className="mp-text-btn" onClick={() => go('collections')}>
-                    All Collections →
-                  </button>
                 </div>
-                <MobileCollections onSelectPage={go} />
+                <MobileCuratedCarousel onSelectPage={go} />
               </section>
 
               <section className="mp-ig">
@@ -188,13 +186,13 @@ export default function MobilePortfolio() {
             </div>
           )}
 
-          {/* ─── CONTACT ─── */}
           {page === 'contact' && (
             <div className="mp-page mp-page--nav">
-              <MobileContact />
+              <MobileContact onBack={() => go('home')} />
               <MobileFooter showPage={go} />
             </div>
           )}
+
 
           {/* ─── TECH FLAT (desktop component, lazy) ─── */}
           {page === 'tech_flat' && (
