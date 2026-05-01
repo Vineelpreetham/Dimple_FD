@@ -774,9 +774,170 @@
   .mh-glow,
   .mh-title,
   .mc-card,
+  .mbp-card,
   .mn-link,
   .mn-overlay,
   .mp-spinner,
   .mco-dot { transition: none !important; animation: none !important; }
-  .mc-card { opacity: 1; transform: none; }
+  .mc-card, .mbp-card { opacity: 1; transform: none; }
 }
+
+/* ─────────────────────────────────────────────
+   MOBILE BRAND / DESIGN PROJECTS
+   ───────────────────────────────────────────── */
+.mbp-wrap {
+  padding-bottom: 4rem;
+  background: #FAF6F2;
+  min-height: 100svh;
+}
+
+.mbp-header {
+  padding: 3.5rem 1.25rem 2rem;
+  border-bottom: 1px solid rgba(58,46,46,0.06);
+  margin-bottom: 0.5rem;
+}
+
+.mbp-back {
+  background: none;
+  border: none;
+  font-family: 'Jost', sans-serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #A89898;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 1.5rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 44px;
+  transition: color 0.2s;
+}
+.mbp-back:active { color: #3A2E2E; }
+
+.mbp-label {
+  display: block;
+  font-family: 'Jost', sans-serif;
+  font-size: 0.5rem;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: #A89898;
+  margin-bottom: 0.5rem;
+}
+
+.mbp-h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2rem, 9vw, 3.5rem);
+  font-weight: 300;
+  color: #3A2E2E;
+  line-height: 1.05;
+  margin: 0 0 0.6rem;
+}
+
+.mbp-intro {
+  font-size: 0.78rem;
+  color: #6B5D5D;
+  line-height: 1.8;
+  max-width: 300px;
+}
+
+/* Card list */
+.mbp-list {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Card */
+.mbp-card {
+  width: 100%;
+  background: none;
+  border: none;
+  border-bottom: 1px solid rgba(58,46,46,0.06);
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.16,1,0.3,1);
+  will-change: opacity, transform;
+}
+.mbp-card--visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Image area */
+.mbp-card-img {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+}
+.mbp-card-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s ease;
+}
+.mbp-card:active .mbp-card-img img { transform: scale(1.03); }
+
+/* Gradient overlay — always visible on mobile */
+.mbp-card-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(20,14,10,0.75) 0%, rgba(20,14,10,0.2) 45%, transparent 75%);
+  pointer-events: none;
+}
+
+/* Title block pinned bottom-left on image */
+.mbp-card-info {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1rem 1.1rem 0.9rem;
+}
+.mbp-card-brand {
+  display: block;
+  font-family: 'Jost', sans-serif;
+  font-size: 0.48rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.6);
+  margin-bottom: 0.25rem;
+}
+.mbp-card-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.5rem;
+  font-weight: 300;
+  color: #fff;
+  margin: 0;
+  line-height: 1.1;
+}
+
+/* Arrow pinned bottom-right */
+.mbp-card-arrow {
+  position: absolute;
+  bottom: 0.9rem;
+  right: 1.1rem;
+  font-size: 1rem;
+  color: rgba(255,255,255,0.65);
+  transition: transform 0.25s ease, color 0.25s ease;
+}
+.mbp-card:active .mbp-card-arrow {
+  transform: translate(3px, -3px);
+  color: #fff;
+}
+
+/* Tagline below image */
+.mbp-card-tagline {
+  padding: 0.75rem 1.25rem 1rem;
+  font-size: 0.72rem;
+  color: #6B5D5D;
+  line-height: 1.7;
+  margin: 0;
+  font-style: italic;
+}
+

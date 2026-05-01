@@ -1,19 +1,19 @@
 import React, { useState, useCallback, Suspense, lazy } from 'react';
 import '../../mobile.css';
 
-// Core mobile views loaded eagerly (tiny files, needed immediately)
-import MobileNav         from './MobileNav';
-import MobileHero        from './MobileHero';
-import MobileCollections from './MobileCollections';
-import MobileAbout       from './MobileAbout';
-import MobileContact     from './MobileContact';
-import MobileFooter      from './MobileFooter';
+// Core mobile views — eager (small, needed immediately)
+import MobileNav           from './MobileNav';
+import MobileHero          from './MobileHero';
+import MobileCollections   from './MobileCollections';
+import MobileAbout         from './MobileAbout';
+import MobileContact       from './MobileContact';
+import MobileFooter        from './MobileFooter';
+import MobileBrandProjects from './MobileBrandProjects';
+import MobileDesignProjects from './MobileDesignProjects';
 
 // Heavy desktop sub-pages — loaded only when navigated to
 const TechFlatPage          = lazy(() => import('../TechFlatPage'));
-const BrandProjectsPage     = lazy(() => import('../BrandProjectsPage'));
 const OrganicStructuresPage = lazy(() => import('../OrganicStructuresPage'));
-const DesignProjectsPage    = lazy(() => import('../DesignProjectsPage'));
 const Brand1Page  = lazy(() => import('../Brand1Page'));
 const Brand2Page  = lazy(() => import('../Brand2Page'));
 const Brand3Page  = lazy(() => import('../Brand3Page'));
@@ -182,7 +182,7 @@ export default function MobilePortfolio() {
 
           {/* ─── BRAND PROJECTS ─── */}
           {page === 'brand_projects' && (
-            <BrandProjectsPage onBack={() => go('collections')} onSelectProject={(id) => go(`brand_${id}`)} />
+            <MobileBrandProjects onBack={() => go('collections')} onSelectProject={(id) => go(`brand_${id}`)} />
           )}
           {page === 'brand_1' && <Brand1Page onBack={() => go('brand_projects')} />}
           {page === 'brand_2' && <Brand2Page onBack={() => go('brand_projects')} />}
@@ -194,7 +194,7 @@ export default function MobilePortfolio() {
 
           {/* ─── DESIGN PROJECTS ─── */}
           {page === 'design_projects' && (
-            <DesignProjectsPage onBack={() => go('collections')} onSelectProject={(id) => go(`design_${id}`)} />
+            <MobileDesignProjects onBack={() => go('collections')} onSelectProject={(id) => go(`design_${id}`)} />
           )}
           {page === 'design_1' && <Design1Page onBack={() => go('design_projects')} />}
           {page === 'design_2' && <Design2Page onBack={() => go('design_projects')} />}
