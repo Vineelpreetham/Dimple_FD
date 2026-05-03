@@ -231,7 +231,7 @@ export default function Footer() {
           style={{ borderTop: '1px solid rgba(0,0,0,0.06)' }}
         >
           <span className="text-xs" style={{ color: 'var(--color-text-light)' }}>
-            © 2025 Dimple FD. All rights reserved.
+            © 2025 Dimple Shivakumar. All rights reserved.
           </span>
           <div className="flex gap-6">
             {['Instagram', 'Twitter', 'Behance'].map((s) => (
