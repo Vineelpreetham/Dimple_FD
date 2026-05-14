@@ -21,7 +21,7 @@
 
 /* Prevent overscroll bounce on inner containers */
 .mp-root {
-  overscroll-behavior: none;
+  /* Removed overscroll-behavior: none to fix Android scroll bug */
 }
 
 /* ── Root shell ── */

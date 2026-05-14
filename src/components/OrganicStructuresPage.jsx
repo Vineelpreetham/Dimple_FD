@@ -1,362 +1,262 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { getOptimizedUrl } from '../lib/imageConfig';
+import React, { useEffect, useRef } from 'react';
+import { motion, useScroll, useTransform, useMotionTemplate } from 'framer-motion';
+import Lenis from 'lenis';
 import { ChevronLeft } from 'lucide-react';
+import { getOptimizedUrl } from '../lib/imageConfig';
+import { BackgroundGradientAnimation } from './ui/background-gradient-animation';
 
-const VIDEOS = [
-  "https://ik.imagekit.io/Nouskun/Dimple/organic%20struc/IMG_6135%203.MOV",
-  "https://ik.imagekit.io/Nouskun/Dimple/organic%20struc/IMG_6134.MOV",
-  "https://ik.imagekit.io/Nouskun/Dimple/organic%20struc/IMG_4596.MOV",
-  "https://ik.imagekit.io/Nouskun/Dimple/organic%20struc/C2DF104F-3F30-448C-9B3F-D3FFB5886252.MP4",
-  "https://ik.imagekit.io/Nouskun/Dimple/organic%20struc/IMG_4638.MOV/ik-video.mp4?updatedAt=1777140867859"
-];
+// 1. Generate images sequentially (OS_1.jpg to OS_45.jpg)
+const MASONRY_ITEMS = [];
+const SIZES = ['sq', 'tall', 'wide', 'port', 'xtal'];
 
-const IMAGES = [
-  "https://ik.imagekit.io/Nouskun/Dimple/organic%20struc/DSC00632.JPG?updatedAt=1777140909246",
-  "https://ik.imagekit.io/Nouskun/Dimple/organic%20struc/DSC00640.JPG?updatedAt=1777140907368",
-  "https://ik.imagekit.io/Nouskun/Dimple/organic%20struc/DSC00625.JPG?updatedAt=1777140907059",
-  "https://ik.imagekit.io/Nouskun/Dimple/organic%20struc/DSC00651.JPG?updatedAt=1777140902111",
-  "https://ik.imagekit.io/Nouskun/Dimple/organic%20struc/DSC00631.JPG?updatedAt=1777140900058",
-  "https://ik.imagekit.io/Nouskun/Dimple/organic%20struc/DSC00639.JPG?updatedAt=1777140900249",
-  "https://ik.imagekit.io/Nouskun/Dimple/organic%20struc/DSC00644.JPG?updatedAt=1777140904755",
-  "https://ik.imagekit.io/Nouskun/Dimple/organic%20struc/IMG_4666.HEIC",
-  "https://ik.imagekit.io/Nouskun/Dimple/organic%20struc/IMG_6707.HEIC",
-  "https://ik.imagekit.io/Nouskun/Dimple/organic%20struc/IMG_4645.HEIC",
-  "https://ik.imagekit.io/Nouskun/Dimple/organic%20struc/IMG_4587.HEIC",
-  "https://ik.imagekit.io/Nouskun/Dimple/organic%20struc/IMG_6709.HEIC",
-  "https://ik.imagekit.io/Nouskun/Dimple/organic%20struc/IMG_4299.jpg",
-  "https://ik.imagekit.io/Nouskun/Dimple/organic%20struc/IMG_4191.JPG",
-  "https://ik.imagekit.io/Nouskun/Dimple/organic%20struc/IMG_4637.HEIC",
-  "https://ik.imagekit.io/Nouskun/Dimple/organic%20struc/IMG_4661.HEIC",
-  "https://ik.imagekit.io/Nouskun/Dimple/organic%20struc/IMG_6710.HEIC",
-  "https://ik.imagekit.io/Nouskun/Dimple/organic%20struc/IMG_4308%203.JPG",
-  "https://ik.imagekit.io/Nouskun/Dimple/organic%20struc/IMG_4232.JPG",
-  "https://ik.imagekit.io/Nouskun/Dimple/organic%20struc/IMG_4652.jpg",
-  "https://ik.imagekit.io/Nouskun/Dimple/organic%20struc/IMG_4660.HEIC"
-];
+for (let i = 1; i <= 45; i++) {
+  MASONRY_ITEMS.push({
+    type: 'img',
+    size: SIZES[i % SIZES.length],
+    src: `https://ik.imagekit.io/Nouskun/Dimple/organic%20struc/OS_${i}.jpg`
+  });
+}
 
-const PIECES_LAYOUT = [
-  {t:'img', label:'01', w:26, h:34, x:3,   y:7,   r:-2.5, z:4},
-  {t:'img', label:'02', w:18, h:23, x:27,  y:4,   r:2,    z:3},
-  {t:'vid', label:'03', w:30, h:22, x:18,  y:30,  r:-1,   z:5},
-  {t:'img', label:'04', w:20, h:28, x:50,  y:5,   r:3,    z:3},
-  {t:'img', label:'05', w:15, h:20, x:68,  y:3,   r:-2,   z:2},
-  {t:'img', label:'06', w:22, h:16, x:66,  y:26,  r:1.5,  z:3},
-  {t:'img', label:'07', w:14, h:20, x:85,  y:10,  r:-3,   z:2},
-  {t:'img', label:'08', w:28, h:20, x:4,   y:56,  r:1,    z:3},
-  {t:'img', label:'09', w:20, h:28, x:34,  y:52,  r:-2.5, z:4},
-  {t:'img', label:'10', w:16, h:18, x:56,  y:55,  r:2,    z:2},
-  {t:'img', label:'11', w:24, h:18, x:68,  y:62,  r:-1,   z:3},
-  {t:'vid', label:'12', w:18, h:24, x:10,  y:78,  r:3,    z:5},
-  {t:'img', label:'13', w:26, h:34, x:32,  y:80,  r:-2,   z:3},
-  {t:'img', label:'14', w:20, h:22, x:60,  y:86,  r:2.5,  z:4},
-  {t:'img', label:'15', w:14, h:20, x:82,  y:78,  r:-2.5, z:2},
-  {t:'img', label:'16', w:22, h:16, x:4,   y:112, r:1.5,  z:3},
-  {t:'vid', label:'17', w:30, h:22, x:28,  y:118, r:-1,   z:5},
-  {t:'img', label:'18', w:18, h:28, x:62,  y:112, r:3,    z:3},
-  {t:'img', label:'19', w:22, h:18, x:74,  y:106, r:-2,   z:2},
-  {t:'img', label:'20', w:20, h:28, x:6,   y:142, r:2,    z:3},
-  {t:'img', label:'21', w:30, h:20, x:30,  y:150, r:-1.5, z:4},
-  {t:'img', label:'22', w:16, h:22, x:62,  y:144, r:2.5,  z:2},
-  {t:'vid', label:'23', w:26, h:34, x:72,  y:138, r:-2,   z:5},
-  {t:'img', label:'24', w:22, h:30, x:4,   y:178, r:1,    z:3},
-  {t:'img', label:'25', w:18, h:22, x:28,  y:186, r:-3,   z:2},
-  {t:'img', label:'26', w:30, h:22, x:48,  y:178, r:2,    z:3},
-  {t:'img', label:'27', w:16, h:24, x:78,  y:182, r:-1.5, z:2},
-  {t:'img', label:'28', w:24, h:32, x:10,  y:216, r:-2,   z:4},
-  {t:'vid', label:'29', w:28, h:20, x:38,  y:222, r:1.5,  z:5},
-  {t:'img', label:'30', w:20, h:28, x:68,  y:216, r:3,    z:3},
-];
+// 2. Generate videos sequentially (OS_VID_1.mp4 to OS_VID_5.mp4)
+for (let i = 1; i <= 5; i++) {
+  MASONRY_ITEMS.push({
+    type: 'vid',
+    size: SIZES[(i + 3) % SIZES.length],
+    src: `https://ik.imagekit.io/Nouskun/Dimple/organic%20struc/OS_VID_${i}.mp4`
+  });
+}
 
-let vI = 0, iI = 0;
-const PIECES = PIECES_LAYOUT.map(p => {
-  if (p.t === 'vid') {
-    return { ...p, src: VIDEOS[vI++ % VIDEOS.length] };
-  } else {
-    return { ...p, src: IMAGES[iI++ % IMAGES.length] };
-  }
+// Deterministic shuffle
+let seed = 1;
+MASONRY_ITEMS.sort(() => {
+  let x = Math.sin(seed++) * 10000;
+  return (x - Math.floor(x)) - 0.5;
 });
 
-const TEXTS = [
-  {cls:'ghost', html:'Organic', x:30, y:42,  r:-4},
-  {cls:'lbl',   html:'Material ↓ Process ↓ Form', x:92, y:60, r:0},
-  {cls:'qte',   html:'Form emerges from what <em>material</em> wants to become.', x:38, y:130, r:1},
-  {cls:'ghost', html:'Form', x:44, y:198, r:3},
-  {cls:'qte',   html:'Each texture holds the <em>memory</em> of its making.', x:6, y:240, r:-1},
-  {cls:'lbl',   html:'Dimple Studio — Organic Series', x:4, y:200, r:0},
-];
+// Insert seamless text cards
+MASONRY_ITEMS.splice(7, 0, { type: 'text', label: 'Material Study', title: 'Form finds<br/>its nature', body: 'Structure follows the logic of growth — where geometry meets the organic.' });
+MASONRY_ITEMS.splice(18, 0, { type: 'text', label: 'Process Note — 02', title: 'Each texture holds<br/>memory', body: 'Clay remembers the hand. The material carries its own history.' });
+MASONRY_ITEMS.splice(35, 0, { type: 'text', label: 'Organic Structure — 2024', title: 'Material<br/>meets form', body: 'A study in growth, texture, and the tension between making and letting be.' });
 
-const LINES = [
-  {x:18, y:162, l:58, d:'h'},
-  {x:5,  y:198, l:40, d:'v'},
-  {x:72, y:108, l:22, d:'h'},
-];
-
-/* Lazy video: only loads & plays when visible */
-const LazyVideo = ({ src, alt }) => {
+function ParallaxBloomMedia({ item, index }) {
   const ref = useRef(null);
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) { setIsVisible(true); obs.disconnect(); } },
-      { rootMargin: '200px' }
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, []);
+  
+  // Parallax inverse to scroll direction
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"]
+  });
+  const y = useTransform(scrollYProgress, [0, 1], ["-12%", "12%"]);
 
   return (
-    <div ref={ref} style={{ width: '100%', height: '100%' }}>
-      {isVisible ? (
-        <video src={src} autoPlay muted loop playsInline preload="none" />
-      ) : null}
+    <div ref={ref} className="w-full h-full relative overflow-hidden group">
+      {item.type === 'img' ? (
+        <motion.img 
+          src={getOptimizedUrl(item.src)} 
+          loading={index < 8 ? "eager" : "lazy"} 
+          alt="Organic Snapshot"
+          style={{ y }}
+          initial={{ filter: "grayscale(100%) blur(6px) saturate(0.8) contrast(1.05)", scale: 1.15 }}
+          whileInView={{ filter: "grayscale(0%) blur(0px) saturate(1.1) contrast(1.05)", scale: 1.25 }}
+          viewport={{ margin: "-25% 0px -25% 0px" }} // Blooms only in the middle 50% of the screen
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          whileHover={{ scale: 1.35, filter: "grayscale(0%) blur(0px) saturate(1.2) contrast(1.1)" }}
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+      ) : (
+        <motion.video 
+          autoPlay muted loop playsInline
+          style={{ y }}
+          initial={{ filter: "grayscale(100%) blur(6px) saturate(0.8) contrast(1.05)", scale: 1.15 }}
+          whileInView={{ filter: "grayscale(0%) blur(0px) saturate(1.1) contrast(1.05)", scale: 1.25 }}
+          viewport={{ margin: "-25% 0px -25% 0px" }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          whileHover={{ scale: 1.35, filter: "grayscale(0%) blur(0px) saturate(1.2) contrast(1.1)" }}
+          className="absolute inset-0 w-full h-full object-cover"
+        >
+          <source src={getOptimizedUrl(item.src)} type="video/mp4" />
+        </motion.video>
+      )}
     </div>
   );
-};
+}
 
-const OrganicStructuresPage = ({ onBack }) => {
+export default function OrganicStructuresPage({ onBack }) {
   const containerRef = useRef(null);
-  const piecesRef = useRef([]);
 
   useEffect(() => {
-    let ticking = false;
-    // Cache the NodeList once instead of querying every frame
-    const pieces = piecesRef.current;
+    // Lenis smooth scroll
+    const lenis = new Lenis({
+      duration: 1.0,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smooth: true,
+      wheelMultiplier: 1.2,
+    });
+    
+    function raf(time) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
 
-    const handleScroll = () => {
-      if (ticking) return;
-      window.requestAnimationFrame(() => {
-        const sy = window.scrollY;
-        for (let idx = 0; idx < pieces.length; idx++) {
-          const el = pieces[idx];
-          if (!el) continue;
-          const i = idx;
-          const r = parseFloat(el.dataset.r || 0);
-          const spd = [0.018, 0.032, 0.01][i % 3];
-          const drift = Math.sin(sy * 0.0015 + i * 0.9) * 0.5;
-          el.style.transform = `rotate(${r + drift}deg) translate3d(0,${-sy * spd}px,0)`;
-        }
-        ticking = false;
-      });
-      ticking = true;
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-
-    // Fade-in observer
+    // Scroll reveal observer
     const obs = new IntersectionObserver(entries => {
-      entries.forEach(e => {
-        if (e.isIntersecting) {
-          e.target.classList.add('vis');
+      entries.forEach((e, i) => {
+        if(e.isIntersecting){
+          setTimeout(() => e.target.classList.add('vis'), (i % 4) * 55);
           obs.unobserve(e.target);
         }
       });
-    }, { threshold: 0.04, rootMargin: '0px 0px -30px 0px' });
+    }, { threshold: 0.05, rootMargin: '0px 0px -30px 0px' });
 
-    pieces.forEach(el => { if (el) obs.observe(el); });
+    if (containerRef.current) {
+      containerRef.current.querySelectorAll('.org-card, .org-text-card').forEach(el => obs.observe(el));
+      
+      containerRef.current.querySelectorAll('.org-card, .org-text-card').forEach((el, i) => {
+        el.style.transitionDelay = (i * 0.04) + 's';
+      });
 
+      setTimeout(() => {
+        if (!containerRef.current) return;
+        containerRef.current.querySelectorAll('.org-card, .org-text-card').forEach(el => {
+          const rect = el.getBoundingClientRect();
+          if(rect.top < window.innerHeight + 100) el.classList.add('vis');
+        });
+      }, 100);
+    }
+    
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      lenis.destroy();
       obs.disconnect();
     };
   }, []);
 
   return (
-    <>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap');
-        
-        .os-container {
-          --bg: transparent;
-          --ink: #16120d;
-          --umber: #7a5c42;
-          --clay: #b8845a;
-          --dust: #cec5b0;
-          --pale: #e6e0d4;
-          background: var(--bg);
-          color: var(--ink);
-          font-family: 'Cormorant Garamond', serif;
-          overflow-x: hidden;
-          min-height: 280vw;
-        }
-
-        .os-nav {
-          position: fixed; top: 0; left: 0; right: 0; z-index: 200;
-          display: flex; justify-content: space-between; align-items: flex-start;
-          padding: 1.8rem 2.5rem; pointer-events: none;
-        }
-        .os-logo {
-          font-family: 'Cormorant Garamond', serif; font-size: 1rem; font-weight: 600;
-          letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink);
-          pointer-events: all; mix-blend-mode: multiply; cursor: pointer;
-          display: flex; align-items: center; gap: 8px;
-        }
-        .os-logo:hover { opacity: 0.7; }
-        .os-nav-r {
-          font-family: 'Jost', sans-serif; font-size: 0.65rem; letter-spacing: 0.18em;
-          color: var(--umber); text-align: right; line-height: 2; pointer-events: all;
-          text-transform: uppercase;
-        }
-
-        .os-stage { position: relative; width: 100%; height: 100%; }
-
-        .os-piece {
-          position: absolute; overflow: hidden; background: var(--dust);
-          box-shadow: 0 3px 20px rgba(22,18,13,.12), 0 1px 5px rgba(22,18,13,.07);
-          opacity: 0; transform-origin: center center;
-          transition: opacity .9s cubic-bezier(.23,1,.32,1);
-          will-change: transform;
-          contain: layout style paint;
-          backface-visibility: hidden;
-        }
-        .os-piece.vis { opacity: 1; }
-        .os-piece img, .os-piece video {
-          width: 100%; height: 100%; object-fit: cover; display: block;
-          filter: saturate(.68) contrast(1.05);
-          transition: filter .65s ease, transform .7s cubic-bezier(.23,1,.32,1);
-        }
-        .os-piece:hover {
-          box-shadow: 0 12px 60px rgba(22,18,13,.24), 0 3px 12px rgba(22,18,13,.12);
-          z-index: 80 !important;
-        }
-        .os-piece:hover img, .os-piece:hover video {
-          filter: saturate(1.05) contrast(1.04); transform: scale(1.05);
-        }
-
-        .os-txt { position: absolute; pointer-events: none; z-index: 5; }
-        .os-txt.ghost {
-          font-size: clamp(6rem, 15vw, 13rem); font-weight: 300; font-style: italic;
-          color: var(--dust); line-height: 1; letter-spacing: -.04em; opacity: .35;
-        }
-        .os-txt.lbl {
-          font-family: 'Jost', sans-serif; font-size: 0.6rem; letter-spacing: 0.3em;
-          color: var(--umber); text-transform: uppercase;
-          writing-mode: vertical-rl; transform: rotate(180deg);
-        }
-        .os-txt.qte {
-          font-size: clamp(1.3rem, 2.8vw, 2.2rem); font-weight: 300; font-style: italic;
-          color: var(--ink); max-width: 20ch; line-height: 1.45;
-        }
-        .os-txt.qte em { color: var(--clay); }
-        .os-txt.idx {
-          font-family: 'Cormorant Garamond', serif; font-size: clamp(5rem, 9vw, 8rem); 
-          font-weight: 300; font-style: italic; color: var(--dust); line-height: 1;
-        }
-
-        .os-ln { position: absolute; background: var(--dust); pointer-events: none; }
-        .os-ln.h { height: 1px; }
-        .os-ln.v { width: 1px; }
-
-        .os-footer {
-          position: absolute; bottom: 0; left: 0; right: 0; z-index: 10;
-          padding: 7rem 3rem 4rem; display: flex; justify-content: space-between; align-items: flex-end;
-          border-top: 1px solid var(--dust); background: transparent;
-        }
-        .os-f-title { font-size: clamp(3rem, 7vw, 6rem); font-weight: 300; font-style: italic; line-height: 1; }
-        .os-f-meta {
-          font-family: 'Jost', sans-serif; font-size: 0.65rem; letter-spacing: 0.25em;
-          color: var(--umber); text-align: right; line-height: 2.6; text-transform: uppercase;
-        }
-        
-        @media (max-width: 768px) {
-          .os-container { min-height: 450vw; }
-          .os-piece { width: calc(var(--w) * 1.8)!important; height: calc(var(--h) * 1.8)!important; left: calc(var(--x) * 1.5 - 20vw)!important; top: calc(var(--y) * 1.8)!important; }
-          .os-txt.ghost { font-size: 20vw; }
-          .os-txt.idx { font-size: 15vw; }
-          .os-txt { top: calc(var(--y) * 1.8)!important; left: calc(var(--x) * 1.5 - 20vw)!important; }
-          .os-ln { display: none; }
-          .os-footer { position: relative; margin-top: 380vw; }
-        }
-      `}</style>
-
-      <div className="os-container relative w-full" ref={containerRef}>
-        <div
-          className="fixed inset-0 z-[-1] h-screen w-screen"
-          style={{
-            background: `
-              radial-gradient(ellipse 80% 60% at 70% 20%, rgba(206,135,159, 0.45), transparent 68%),
-              radial-gradient(ellipse 70% 60% at 20% 80%, rgba(110,165,225, 0.35), transparent 68%),
-              radial-gradient(ellipse 60% 50% at 60% 65%, rgba(255,249,145, 0.50), transparent 68%),
-              linear-gradient(180deg, #FDFBFB 0%, #EBEDEE 100%)
-            `,
-          }}
+    <div className="w-full min-h-screen overflow-x-hidden relative bg-[#FAF6F2]" ref={containerRef}>
+      
+      {/* Liquid Blue Background for Continuity! */}
+      <div className="fixed inset-0 z-0 pointer-events-none opacity-80">
+        <BackgroundGradientAnimation 
+          containerClassName="absolute inset-0 w-full h-full"
+          gradientBackgroundStart="rgb(250, 246, 242)"
+          gradientBackgroundEnd="rgb(250, 246, 242)"
+          firstColor="100, 180, 255"
+          secondColor="150, 210, 255"
+          thirdColor="200, 235, 255"
+          fourthColor="250, 246, 242"
+          fifthColor="120, 190, 255"
+          pointerColor="140, 200, 255"
+          blendingValue="normal"
         />
-        <div className="scroll-explore">
-          <div className="scroll-explore-line"></div>
-          <p className="scroll-explore-text">Scroll to Explore</p>
-        </div>
+      </div>
 
-        <nav className="os-nav">
-          {onBack ? (
-            <button onClick={onBack} className="project-back-btn" style={{ position: 'fixed', zIndex: 200, pointerEvents: 'auto' }}>
-              <ChevronLeft size={18} strokeWidth={1.5} />
-              <span>Back</span>
-            </button>
-          ) : <div />}
-          <div className="os-nav-r">Organic Structure</div>
-        </nav>
+      <style dangerouslySetInnerHTML={{__html: `
+        .org-masonry {
+          column-count: 5;
+          column-gap: 16px;
+          padding: 16px;
+        }
+        @media(max-width:1100px){ .org-masonry{ column-count:4 } }
+        @media(max-width:800px) { .org-masonry{ column-count:3 } }
+        @media(max-width:500px) { .org-masonry{ column-count:2; column-gap:8px; padding: 8px; } }
 
-        <div className="os-stage">
-          {PIECES.map((p, i) => {
-            const optimizedSrc = getOptimizedUrl(p.src, { width: 800, quality: 75 });
+        .org-card {
+          break-inside: avoid;
+          margin-bottom: 16px;
+          border-radius: 12px;
+          overflow: hidden;
+          position: relative;
+          background: transparent;
+          opacity: 0;
+          transform: translateY(24px);
+          transition: opacity .75s cubic-bezier(.23,1,.32,1), transform .75s cubic-bezier(.23,1,.32,1);
+          cursor: pointer;
+        }
+        .org-card.vis { opacity: 1; transform: translateY(0); }
+        .org-card:hover { z-index: 10; }
+
+        /* HTML-inspired Aspect Ratios directly on the card for parallax constraint */
+        .org-card.sq   { aspect-ratio: 1/1; }
+        .org-card.tall { aspect-ratio: 2/3; }
+        .org-card.wide { aspect-ratio: 4/3; }
+        .org-card.port { aspect-ratio: 3/4; }
+        .org-card.xtal { aspect-ratio: 9/16; }
+
+        .org-text-card {
+          break-inside: avoid;
+          margin-bottom: 16px;
+          border-radius: 12px;
+          background: rgba(250, 246, 242, 0.45);
+          backdrop-filter: blur(12px);
+          border: 1px solid rgba(255,255,255,0.2);
+          padding: 2.5rem 1.6rem;
+          display: flex; flex-direction: column; gap: .8rem;
+          opacity: 0; transform: translateY(24px);
+          transition: opacity .75s cubic-bezier(.23,1,.32,1), transform .75s cubic-bezier(.23,1,.32,1);
+          color: #3A2E2E;
+        }
+        .org-text-card.vis { opacity: 1; transform: translateY(0); }
+        .org-text-card .tc-label {
+          font-family: 'DM Mono', monospace;
+          font-size: .65rem; letter-spacing: .2em; font-weight: bold;
+          color: #6A5F5F; text-transform: uppercase;
+        }
+        .org-text-card .tc-title {
+          font-family: 'DM Serif Display', serif;
+          font-size: 2rem; font-weight: 400; font-style: italic;
+          line-height: 1.1; color: #3A2E2E;
+        }
+        .org-text-card .tc-body {
+          font-family: 'Jost', sans-serif;
+          font-size: 1rem; font-weight: 400;
+          line-height: 1.6; color: #6A5F5F;
+        }
+      `}} />
+
+      {/* Top Gradient Fade for perfectly readable title & back button */}
+      <div className="fixed top-0 left-0 w-full h-[11rem] bg-gradient-to-b from-[#FAF6F2] via-[#FAF6F2]/90 to-transparent pointer-events-none z-30"></div>
+      
+      {/* Bottom Gradient Fade so images softly disappear */}
+      <div className="fixed bottom-0 left-0 w-full h-[4vh] bg-gradient-to-t from-[#FAF6F2] via-[#FAF6F2]/90 to-transparent pointer-events-none z-30"></div>
+
+      {/* Back button maintaining exact Tech Flat continuity */}
+      {onBack && (
+        <button onClick={onBack} className="project-back-btn z-40" style={{ position: 'fixed' }}>
+          <ChevronLeft size={18} strokeWidth={1.5} />
+          <span>Back</span>
+        </button>
+      )}
+
+      {/* Overlay Title matching Tech Flat continuity */}
+      <div className="fixed top-10 left-0 w-full text-center pointer-events-none z-40">
+        <h2 className="section-title text-[#3A2E2E] drop-shadow-sm !text-[3.15rem] md:!text-[5rem] lg:!text-[5.85rem] tracking-tight" style={{ textShadow: '0 4px 25px rgba(250, 246, 242, 0.9), 0 0 10px rgba(250, 246, 242, 0.5)' }}>
+          Organic Structure
+        </h2>
+      </div>
+
+      {/* Masonry Content */}
+      <section className="px-4 pb-32 max-w-[1800px] mx-auto z-20 relative" style={{ paddingTop: 'clamp(170px, 20vh, 255px)' }}>
+        <div className="org-masonry">
+          {MASONRY_ITEMS.map((item, index) => {
+            if (item.type === 'text') {
+              return (
+                <div key={index} className="org-text-card">
+                  <span className="tc-label">{item.label}</span>
+                  <div className="tc-title" dangerouslySetInnerHTML={{ __html: item.title }}></div>
+                  <div className="tc-body">{item.body}</div>
+                </div>
+              );
+            }
 
             return (
-              <div 
-                key={`piece-${i}`}
-                className="os-piece"
-                ref={el => { piecesRef.current[i] = el; }}
-                data-i={i}
-                data-r={p.r}
-                style={{
-                  '--w': `${p.w}vw`, '--h': `${p.h}vw`, '--x': `${p.x}vw`, '--y': `${p.y}vw`,
-                  width: `${p.w}vw`, height: `${p.h}vw`, left: `${p.x}vw`, top: `${p.y}vw`,
-                  transform: `rotate(${p.r}deg) translate3d(0,0,0)`, zIndex: p.z,
-                  transitionDelay: `${(i % 6) * 0.055}s`
-                }}
-              >
-                {p.t === 'img' ? (
-                  <img src={optimizedSrc} alt={`Organic ${p.label}`} loading="lazy" decoding="async" />
-                ) : (
-                  <LazyVideo src={optimizedSrc} alt={`Organic ${p.label}`} />
-                )}
+              <div key={index} className={`org-card ${item.size}`}>
+                <ParallaxBloomMedia item={item} index={index} />
               </div>
             );
           })}
-
-          {TEXTS.map((t, i) => (
-            <div 
-              key={`txt-${i}`}
-              className={`os-txt ${t.cls}`}
-              style={{
-                '--x': `${t.x}vw`, '--y': `${t.y}vw`,
-                left: `${t.x}vw`, top: `${t.y}vw`, transform: `rotate(${t.r}deg)`
-              }}
-              dangerouslySetInnerHTML={{ __html: t.html }}
-            />
-          ))}
-
-          {LINES.map((l, i) => (
-            <div 
-              key={`ln-${i}`}
-              className={`os-ln ${l.d}`}
-              style={l.d === 'h' ? { left: `${l.x}vw`, top: `${l.y}vw`, width: `${l.l}vw` } : { left: `${l.x}vw`, top: `${l.y}vw`, height: `${l.l}vw` }}
-            />
-          ))}
         </div>
-
-        <footer className="os-footer">
-          <h2 className="os-f-title">Organic<br/><em>Structure</em></h2>
-          <div className="os-f-meta">
-            Dimple Studio<br/>
-            Material Studies<br/>
-            Process &amp; Form
-          </div>
-        </footer>
-      </div>
-    </>
+      </section>
+      
+    </div>
   );
-};
-
-export default OrganicStructuresPage;
+}

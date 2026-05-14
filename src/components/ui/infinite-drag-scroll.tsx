@@ -12,6 +12,8 @@ import {
   useRef,
   useState,
   createContext,
+  useMemo,
+  Children,
 } from "react";
 import { cva } from "class-variance-authority";
 import { cn } from "../../lib/utils";
@@ -131,12 +133,12 @@ export const GridItem = ({
   const variant = useContext(GridVariantContext);
 
   const gridItemStyles = cva(
-    "overflow-hidden hover:cursor-pointer w-full h-full will-change-transform",
+    "hover:cursor-pointer w-full h-full will-change-transform group",
     {
       variants: {
         variant: {
           default: "rounded-sm",
-          masonry: "even:mt-[12%]",
+          masonry: "even:mt-[15%] odd:-mt-[5%] transition-all duration-500",
           polaroid:
             "border-10 border-b-28 border-white shadow-xl even:rotate-3 odd:-rotate-2 hover:rotate-0 transition-transform ease-out duration-300 even:mt-[60%]",
         },
@@ -169,11 +171,13 @@ export const GridBody = memo(
   }) => {
     const variant = useContext(GridVariantContext);
 
-    const gridBodyStyles = cva("grid grid-cols-[repeat(6,1fr)] h-fit w-fit", {
+    // Responsive columns: 6 on mobile & tablet, 11 on desktop. 
+    // This ensures the grid block is significantly wider than the screen so the duplicate block is hidden off-screen!
+    const gridBodyStyles = cva("grid grid-cols-[repeat(6,1fr)] md:grid-cols-[repeat(11,1fr)] h-fit w-fit", {
       variants: {
         variant: {
           default: "gap-0 p-0",
-          masonry: "gap-0 p-0",
+          masonry: "gap-4 md:gap-8 p-4",
           polaroid: "gap-x-14 px-7 md:gap-x-28 md:px-14",
         },
       },
@@ -182,14 +186,22 @@ export const GridBody = memo(
       },
     });
 
+    const childrenArray = Children.toArray(children);
+    
+    // Memoize the blocks. They MUST be identical for the Framer Motion wrap() 
+    // to work seamlessly without snapping artifacts during infinite scroll.
+    const shuffledBlocks = useMemo(() => {
+      return Array.from({ length: 4 }).map(() => childrenArray);
+    }, [children]);
+
     return (
       <>
-        {Array.from({ length: 4 }).map((_, index) => (
+        {shuffledBlocks.map((block, index) => (
           <div
             key={index}
             className={cn(gridBodyStyles({ variant, className }))}
           >
-            {children}
+            {block}
           </div>
         ))}
       </>
