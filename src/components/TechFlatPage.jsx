@@ -158,7 +158,7 @@ const TechFlatPage = ({ onBack }) => {
                 className="relative h-40 w-28 md:h-64 md:w-44 lg:h-80 lg:w-56 bg-transparent flex items-center justify-center transition-all duration-500 ease-out hover:z-50 active:z-50"
               >
                 <img
-                  src={getOptimizedUrl(image.src, { isTransparent: false })}
+                  src={getOptimizedUrl(image.src, { isTransparent: false, width: 600, quality: 75 })}
                   alt={image.alt}
                   loading="lazy"
                   draggable={false}
