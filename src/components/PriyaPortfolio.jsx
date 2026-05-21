@@ -659,7 +659,7 @@ const PriyaPortfolio = () => {
               <div className="collection-card-glass card-silent reveal cursor-pointer group" style={{ transitionDelay: '0.4s' }} onClick={() => showPage('design_projects')}>
                 <div className="collection-card-content horizontal">
                   <div className="collection-card-img-wrapper wide">
-                    <img src={getOptimizedUrl("https://ik.imagekit.io/Nouskun/Dimple/design%20/4/2.jpg?updatedAt=1777147098468")} alt="Design Projects" loading="lazy" />
+                    <img src={getOptimizedUrl("https://ik.imagekit.io/Nouskun/Dimple/design%20/3/1.jpg?updatedAt=1777147045908")} alt="Design Projects" loading="lazy" />
 
                     <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                       <span className="text-white text-xs uppercase tracking-widest font-bold">View Projects</span>

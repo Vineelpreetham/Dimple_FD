@@ -13,7 +13,7 @@ const COLS = [
     title: 'Design Projects',
     sub: 'Selected Works',
     desc: 'Concepts crafted into visual stories worth telling.',
-    img: 'https://ik.imagekit.io/Nouskun/Dimple/design%20/4/2.jpg?tr=f-auto,q-70,w-800',
+    img: 'https://ik.imagekit.io/Nouskun/Dimple/design%20/3/1.jpg?updatedAt=1777147045908&tr=f-auto,q-70,w-800',
   },
   {
     id: 'tech_flat',

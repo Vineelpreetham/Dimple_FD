@@ -15,7 +15,7 @@ const SLIDES = [
     sub: 'Selected Works',
     num: '02',
     desc: 'Concepts crafted into visual stories worth telling.',
-    img: 'https://ik.imagekit.io/Nouskun/Dimple/design%20/4/2.jpg?tr=f-auto,q-75,w-1000',
+    img: 'https://ik.imagekit.io/Nouskun/Dimple/design%20/3/1.jpg?updatedAt=1777147045908&tr=f-auto,q-75,w-1000',
   },
   {
     id: 'tech_flat',
