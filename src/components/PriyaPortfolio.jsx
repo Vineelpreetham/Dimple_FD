@@ -91,7 +91,7 @@ const galleryCollections = [
 const HERO_SLIDES = [
   {
     id: 'pink',
-    mainImage: getOptimizedUrl('https://ik.imagekit.io/Nouskun/Dimple/Home/OB2449469_right_3.png'),
+    mainImage: getOptimizedUrl('https://ik.imagekit.io/Nouskun/Dimple/Home/OB2449469_right_3.png', { width: 900 }),
     background: '#F9F6F8',
     simpleGlow: 'rgba(206,135,159,0.75)',
     titleGradient: 'linear-gradient(180deg, #D4A0B5 0%, #C0758D 62%, #5A3742 100%)',
@@ -102,7 +102,7 @@ const HERO_SLIDES = [
   },
   {
     id: 'gold',
-    mainImage: getOptimizedUrl('https://ik.imagekit.io/Nouskun/Dimple/Home/Blue_use.png'),
+    mainImage: getOptimizedUrl('https://ik.imagekit.io/Nouskun/Dimple/Home/Blue_use.png', { width: 900 }),
     background: '#F9F8F2',
     simpleGlow: 'rgba(237,200,80,0.80)',
     titleGradient: 'linear-gradient(180deg, #EDE4A8 0%, #CCBA5E 67%, #6B5C22 91%)',
@@ -113,7 +113,7 @@ const HERO_SLIDES = [
   },
   {
     id: 'maroon',
-    mainImage: getOptimizedUrl('https://ik.imagekit.io/Nouskun/Dimple/Home/maroon%20use.png'),
+    mainImage: getOptimizedUrl('https://ik.imagekit.io/Nouskun/Dimple/Home/maroon%20use.png', { width: 900 }),
     background: '#F8F5F6',
     simpleGlow: 'rgba(194,135,150,0.78)',
     titleGradient: 'linear-gradient(180deg, #C9B0B5 0%, #AC8E93 58%, #5C3040 91%)',
@@ -124,7 +124,7 @@ const HERO_SLIDES = [
   },
   {
     id: 'blue',
-    mainImage: getOptimizedUrl('https://ik.imagekit.io/Nouskun/Dimple/Home/lavender_use.png'),
+    mainImage: getOptimizedUrl('https://ik.imagekit.io/Nouskun/Dimple/Home/lavender_use.png', { width: 900 }),
     background: '#F4F6FA',
     simpleGlow: 'rgba(150,175,225,0.78)',
     titleGradient: 'linear-gradient(180deg, #A8B8CE 0%, #7A97B8 69%, #1A1845 91%)',
